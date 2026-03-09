@@ -16,7 +16,37 @@ use Filament\Tables\Table;
 
 class TypeTaxeResource extends Resource
 {
-    protected static ?string $model = TypeTaxe::class;
+
+
+      protected static ?string $model = TypeTaxe::class;
+
+    // Seul super admin peut créer un type de taxe
+    public static function canCreate(): bool
+    {
+        $agent = auth()->guard('web')->user(); // ton auth est sur Agents
+        return $agent && $agent->isSuperAdmin();
+    }
+
+    public static function canEdit($record): bool
+    {
+        $agent = auth()->guard('web')->user();
+        return $agent && $agent->isSuperAdmin();
+    }
+
+    public static function canDelete($record): bool
+    {
+        $agent = auth()->guard('web')->user();
+        return $agent && $agent->isSuperAdmin();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        $agent = auth()->guard('web')->user();
+        return $agent && $agent->isSuperAdmin(); // agents ne verront pas le menu
+    }
+
+
+   
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

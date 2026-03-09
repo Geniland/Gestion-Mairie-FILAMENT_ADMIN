@@ -7,9 +7,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use App\Models\TypeTaxe;
+
 
 class TypeTaxeForm
 {
+
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -33,4 +37,5 @@ class TypeTaxeForm
                     ->required(),
             ]);
     }
+    
 }

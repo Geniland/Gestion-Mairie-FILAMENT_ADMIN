@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\DB;
 
 class AgentRevenue extends TableWidget
 {
-    protected static ?string $heading = 'Recettes par agent';
+    protected static ?string $heading = 'Performance des agents collecteurs';
+
+    protected int|string|array $columnSpan = 'full';
+
+    protected static ?int $sort = 2;
 
     public function table(Table $table): Table
     {
@@ -23,25 +27,35 @@ class AgentRevenue extends TableWidget
                         'agents.id',
                         'agents.nom',
                         DB::raw('COUNT(tickets.id) as total_tickets'),
-                        DB::raw('SUM(taxes.montant) as total_collecte')
+                        DB::raw('COALESCE(SUM(taxes.montant),0) as total_collecte')
                     )
                     ->groupBy('agents.id', 'agents.nom')
+                    ->orderByDesc('total_collecte')
+                    ->limit(5)
             )
 
             ->columns([
 
                 Tables\Columns\TextColumn::make('nom')
                     ->label('Agent')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('medium'),
 
                 Tables\Columns\TextColumn::make('total_tickets')
                     ->label('Tickets émis')
+                    ->alignCenter()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('total_collecte')
                     ->label('Montant collecté')
                     ->money('XOF')
+                    ->alignEnd()
                     ->sortable(),
-            ]);
+
+            ])
+
+            ->striped()
+            ->paginated(false)
+            ->defaultSort('total_collecte', 'desc');
     }
 }

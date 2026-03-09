@@ -18,6 +18,31 @@ class CommuneResource extends Resource
 {
     protected static ?string $model = Commune::class;
 
+        public static function canCreate(): bool
+    {
+        $agent = auth()->guard('web')->user(); // ton auth est sur Agents
+        return $agent && $agent->isSuperAdmin();
+    }
+
+    public static function canEdit($record): bool
+    {
+        $agent = auth()->guard('web')->user();
+        return $agent && $agent->isSuperAdmin();
+    }
+
+    public static function canDelete($record): bool
+    {
+        $agent = auth()->guard('web')->user();
+        return $agent && $agent->isSuperAdmin();
+    }
+
+     public static function shouldRegisterNavigation(): bool
+    {
+        $agent = auth()->guard('web')->user();
+        return $agent && $agent->isSuperAdmin(); // agents ne verront pas le menu
+    }
+
+
     protected static string|BackedEnum|null $navigationIcon = "heroicon-o-building-office";
 
     protected static ?string $recordTitleAttribute = 'nom';
