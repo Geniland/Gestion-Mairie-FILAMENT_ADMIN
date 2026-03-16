@@ -11,6 +11,7 @@ class Tickets extends Model
         'commune_id',
         'contribuable_id',
         'taxe_id',
+        'agent_id',
         'numero_ticket',
         'qr_hash',
         'date_expiration',
@@ -37,6 +38,12 @@ class Tickets extends Model
                 md5($ticket->numero_ticket.time());
         });
     }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agents::class, 'agent_id');
+    }
+
 
     public function taxe()
     {

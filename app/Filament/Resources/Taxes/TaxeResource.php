@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class TaxeResource extends Resource
 {
@@ -21,6 +22,25 @@ class TaxeResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = "heroicon-o-banknotes";
 
     protected static ?string $recordTitleAttribute = 'type_taxe_id';
+
+    
+
+public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    $user = auth()->user();
+
+    // Super admin voit tout
+    if ($user->isSuperAdmin()) {
+        return $query;
+    }
+
+    // Agent voit seulement les taxes qu'il a créées
+    return $query->where('agent_id', $user->id);
+}
+
+
 
     public static function form(Schema $schema): Schema
     {

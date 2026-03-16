@@ -18,16 +18,20 @@ class Payement extends Model
         'reference',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
+   protected static function boot()
+{
+    parent::boot();
 
-        static::created(function ($paiement) {
-            $paiement->taxe->update([
-                'statut' => 'payée'
+    static::created(function ($payement) {
+
+        if ($payement->taxe) {
+            $payement->taxe->update([
+                'statut' => 'payee'
             ]);
-        });
-    }
+        }
+
+    });
+}
 
     public function taxe()
     {

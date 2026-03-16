@@ -6,6 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use App\Models\Taxe;
 
 class PayementForm
 {
@@ -13,64 +14,79 @@ class PayementForm
     {
         return $schema
             ->components([
-            // Select::make('taxe_id')
-            //     ->relationship('taxe', 'reference')
-            //     ->searchable()
-            //     ->required(),
 
-            // Select::make('taxe_id')
-            //     ->label('Taxe')
-            //     ->relationship('taxe', 'id')
-            //     ->getOptionLabelFromRecordUsing(function ($record) {
-            //         return $record->typeTaxe->nom . ' - ' . $record->montant;
-            //     })
-            //     ->searchable()
-            //     ->required(),
-
-            Select::make('commune_id')
-                    ->relationship('commune', 'nom')
+                // Choix de la taxe impayée
+                Select::make('taxe_id')
+                    ->label('Taxe impayée')
+                    ->relationship(
+                        name: 'taxe',
+                        titleAttribute: 'id',
+                        modifyQueryUsing: fn ($query) => $query->where('statut', 'en_attente')
+                    )
+                    ->getOptionLabelFromRecordUsing(fn ($record) =>
+                        $record->contribuable->nom .
+                        ' | ' .
+                        $record->typeTaxe->nom .
+                        ' | ' .
+                        number_format($record->montant, 0, ',', ' ') . ' FCFA'
+                    )
                     ->searchable()
                     ->preload()
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function ($state, $set) {
+                        $taxe = Taxe::find($state);
+                        if ($taxe) {
+                            // Remplit les champs automatiquement
+                            $set('contribuable_id', $taxe->contribuable_id);
+                            $set('montant', $taxe->montant);
+                            $set('commune_id', $taxe->commune_id);
+                        }
+                    }),
+
+                // Ces champs sont "hidden" mais doivent être envoyés à la DB
+                Select::make('commune_id')
+                ->relationship('commune', 'nom')  
+                ->required()
+                ->searchable(),
+
+
+                Select::make('contribuable_id')    
+                    ->relationship('contribuable', 'nom')
+                    ->required()
+                    ->searchable()
+                    ->dehydrated(),
+
+                TextInput::make('montant')
+                    ->numeric()
+                    ->required()
+                    ->dehydrated(), // 🔑 important pour envoyer même si désactivé
+                    // Ne pas mettre disabled()
+
+                Select::make('agent_id')
+                    ->relationship('agent', 'nom')
                     ->required(),
 
-            Select::make('taxe_id')
-                ->relationship('taxe.typeTaxe', 'nom'),
+                Select::make('mode_payement')
+                    ->options([
+                        'cash' => 'Cash',
+                        'tmoney' => 'TMoney',
+                        'flooz' => 'Flooz',
+                        'banque' => 'Banque',
+                    ])
+                    ->required(),
 
-            Select::make('contribuable_id')
-                ->relationship('contribuable', 'nom')
-                ->searchable()
-                ->required(),
+                TextInput::make('reference_transaction')
+                    ->label('Référence transaction')
+                    ->visible(fn ($get) => $get('mode_payement') !== 'cash'),
 
-            Select::make('agent_id')
-                ->relationship('agent', 'nom')
-                ->required(),
-
-            // TextInput::make('montant')
-            //     ->numeric()
-            //     ->required(),
-
-            Select::make('mode_payement')
-                ->options([
-                    'cash' => 'Cash',
-                    'tmoney' => 'TMoney',
-                    'flooz' => 'Flooz',
-                    'banque' => 'Banque',
-                ])
-                ->required(),
-
-            TextInput::make('reference_transaction')
-                ->label('Référence transaction')
-                ->visible(fn ($get) =>
-                    $get('mode_payement') !== 'cash'
-                ),
-                TextInput::make('montant')
-                    ->required()
-                    ->numeric(),
-               
                 TextInput::make('reference')
                     ->default(null),
+
                 DatePicker::make('date_payement')
-                    ->required(),
+                    ->required()
+                    ->default(today()),
+
             ]);
     }
 }

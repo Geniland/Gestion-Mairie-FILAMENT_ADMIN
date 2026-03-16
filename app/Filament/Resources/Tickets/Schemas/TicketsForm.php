@@ -28,6 +28,12 @@ class TicketsForm
             //     ->searchable(),
 
 
+            Select::make('agent_id')
+                ->relationship('agent', 'nom')
+                ->default(fn () => auth()->user()->id) // ✅ pré-rempli avec l'agent connecté
+                ->dehydrated()
+                ->required(),
+
             Select::make('contribuable_id')
                     ->relationship('contribuable', 'nom')
                     ->required()

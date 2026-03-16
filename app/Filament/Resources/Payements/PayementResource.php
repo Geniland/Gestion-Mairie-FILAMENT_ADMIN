@@ -22,6 +22,22 @@ class PayementResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'montant';
 
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+{
+    $query = parent::getEloquentQuery();
+
+    $user = auth()->user();
+
+    // SuperAdmin voit tout
+    if ($user->isSuperAdmin()) {
+        return $query;
+    }
+
+    // Agent voit seulement ses paiements
+    return $query->where('agent_id', $user->id);
+}
+
     public static function form(Schema $schema): Schema
     {
         return PayementForm::configure($schema);

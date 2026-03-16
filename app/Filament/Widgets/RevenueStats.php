@@ -2,46 +2,100 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use App\Models\Tickets;
-use App\Models\Contribuable;
-use Illuminate\Support\Facades\DB;
+use App\Models\Payement;
+use Carbon\Carbon;
 
-class RevenueStats extends StatsOverviewWidget
+class RevenueStats extends BaseWidget
 {
     protected function getStats(): array
     {
-        $ticketsTotal = Tickets::count();
+        $user = auth()->user();
 
-        $recettes = Tickets::join('taxes', 'tickets.taxe_id', '=', 'taxes.id')
-            ->sum('taxes.montant');
+        // requête de base
+        $query = Payement::query();
 
-        $ticketsToday = Tickets::whereDate('created_at', today())->count();
+        // si ce n'est pas super admin → filtrer par agent
+        if (!$user->isSuperAdmin()) {
+            $query->where('agent_id', $user->id);
+        }
 
-        $recettesToday = Tickets::join('taxes', 'tickets.taxe_id', '=', 'taxes.id')
-            ->whereDate('tickets.created_at', today())
-            ->sum('taxes.montant');
+        $today = (clone $query)
+            ->whereDate('created_at', today())
+            ->sum('montant');
+
+        $week = (clone $query)
+            ->whereBetween('created_at', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ])
+            ->sum('montant');
+
+        $month = (clone $query)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('montant');
+
+        $year = (clone $query)
+            ->whereYear('created_at', now()->year)
+            ->sum('montant');
 
         return [
 
-            Stat::make('Tickets émis', $ticketsTotal)
-                ->description($ticketsToday . ' aujourd\'hui')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('primary')
-                ->icon('heroicon-o-ticket'),
-
-            Stat::make('Recettes totales', number_format($recettes, 0, ',', ' ') . ' FCFA')
-                ->description(number_format($recettesToday, 0, ',', ' ') . ' aujourd\'hui')
-                ->descriptionIcon('heroicon-m-banknotes')
+            Stat::make('Recette du Jour', number_format($today, 0, ',', ' ') . ' FCFA')
+                ->icon('heroicon-m-banknotes')
                 ->color('success')
-                ->icon('heroicon-o-banknotes'),
+                ->description('vs hier: ' . $this->getVariation($query, $today))
+                ->descriptionIcon($this->getVariationIcon($query, $today))
+                ->chart([3,5,8,12,9,14,18]),
 
-            Stat::make('Contribuables', Contribuable::count())
-                ->description('Personnes enregistrées')
-                ->descriptionIcon('heroicon-m-users')
+            Stat::make('Recette de la Semaine', number_format($week, 0, ',', ' ') . ' FCFA')
+                ->icon('heroicon-m-banknotes')
+                ->color('info')
+                ->description('Objectif: ' . number_format($week * 1.2, 0, ',', ' ') . ' FCFA')
+                ->chart([5,8,12,16,20,25,30]),
+
+            Stat::make('Recette du Mois', number_format($month, 0, ',', ' ') . ' FCFA')
+                ->icon('heroicon-m-banknotes')
                 ->color('warning')
-                ->icon('heroicon-o-users'),
+                ->chart([10,15,18,22,30,35,40]),
+
+            Stat::make('Recette de l\'Année', number_format($year, 0, ',', ' ') . ' FCFA')
+                ->icon('heroicon-m-shield-check')
+                ->color('primary')
+                ->chart([50,70,90,120,160,200,275]),
         ];
+    }
+
+    private function getVariation($query, $current): string
+    {
+        $yesterday = (clone $query)
+            ->whereDate('created_at', Carbon::yesterday())
+            ->sum('montant');
+
+        if ($yesterday == 0) return 'Nouveau';
+
+        $variation = round((($current - $yesterday) / $yesterday) * 100, 1);
+
+        return ($variation > 0 ? '+' : '') . $variation . '%';
+    }
+
+    private function getVariationIcon($query, $current): string
+    {
+        $yesterday = (clone $query)
+            ->whereDate('created_at', Carbon::yesterday())
+            ->sum('montant');
+
+        if ($yesterday == 0) return 'heroicon-m-sparkles';
+
+        return $current >= $yesterday
+            ? 'heroicon-m-arrow-trending-up'
+            : 'heroicon-m-arrow-trending-down';
+    }
+
+    protected function getColumns(): int
+    {
+        return 4;
     }
 }

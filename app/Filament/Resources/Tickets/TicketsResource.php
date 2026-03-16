@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-
+use Illuminate\Database\Eloquent\Builder;
 class TicketsResource extends Resource
 {
     protected static ?string $model = Tickets::class;
@@ -21,6 +21,25 @@ class TicketsResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-ticket';
 
     protected static ?string $recordTitleAttribute = 'numero_ticket';
+
+
+
+
+public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+
+    $user = auth()->user();
+
+    // SuperAdmin voit tout
+    if ($user->isSuperAdmin()) {
+        return $query;
+    }
+
+    // Agent voit seulement ses tickets
+    return $query->where('agent_id', $user->id);
+}
+
 
     public static function form(Schema $schema): Schema
     {

@@ -22,6 +22,23 @@ class ContribuableResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nom';
 
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+{
+    $query = parent::getEloquentQuery();
+
+    $user = auth()->user();
+
+    // 👑 SuperAdmin → voit tout
+    if ($user->isSuperAdmin()) {
+        return $query;
+    }
+
+    // 👤 Agent → voit seulement ses contribuables
+    return $query->where('agent_id', $user->id);
+}
+
+
     public static function form(Schema $schema): Schema
     {
         return ContribuableForm::configure($schema);

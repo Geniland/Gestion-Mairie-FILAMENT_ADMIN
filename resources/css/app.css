@@ -9,3 +9,23 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.stat-jour{
+    background: linear-gradient(90deg,#43a047,#2e7d32) !important;
+    color:white !important;
+}
+
+.stat-semaine{
+    background: linear-gradient(90deg,#0f766e,#115e59) !important;
+    color:white !important;
+}
+
+.stat-mois{
+    background: linear-gradient(90deg,#2b7bbb,#1d5f8f) !important;
+    color:white !important;
+}
+
+.stat-annee{
+    background: linear-gradient(90deg,#1f7a63,#155e4b) !important;
+    color:white !important;
+}

@@ -19,21 +19,21 @@ class TopTaxes extends TableWidget
         return $table
             ->query(
                 Taxe::query()
-                    ->join('tickets', 'taxes.id', '=', 'tickets.taxe_id')
                     ->join('types_taxes', 'taxes.type_taxe_id', '=', 'types_taxes.id')
+                    ->join('payements', 'taxes.id', '=', 'payements.taxe_id')
+                    ->where('taxes.statut', 'payee')
                     ->select(
-                        'taxes.id',
+                        DB::raw('MIN(taxes.id) as id'),
                         'types_taxes.nom as taxe',
-                        DB::raw('COUNT(tickets.id) as total_paiements'),
-                        DB::raw('COALESCE(SUM(taxes.montant),0) as total_montant')
+                        DB::raw('COUNT(payements.id) as total_paiements'),
+                        DB::raw('SUM(payements.montant) as total_montant')
                     )
-                    ->groupBy('taxes.id', 'types_taxes.nom')
+                    ->groupBy('types_taxes.id', 'types_taxes.nom')
                     ->orderByDesc('total_montant')
                     ->limit(5)
             )
 
             ->columns([
-
                 Tables\Columns\TextColumn::make('taxe')
                     ->label('Taxe')
                     ->weight('bold')
@@ -50,11 +50,16 @@ class TopTaxes extends TableWidget
                     ->money('XOF')
                     ->color(fn ($state) => $state > 100000 ? 'success' : 'warning')
                     ->sortable(),
-
             ])
 
             ->striped()
             ->defaultSort('total_montant', 'desc')
             ->paginated(false);
     }
+        public static function canView(): bool
+{
+    $agent = auth()->guard('web')->user();
+
+    return $agent && $agent->isSuperAdmin();
+}
 }
