@@ -3,8 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AgentsController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\Api\CommunesController;
 use App\Http\Controllers\Api\ContribuablesController;
 use App\Http\Controllers\Api\PayementsController;
@@ -15,7 +13,6 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 
->>>>>>> efa4ca4 (gen committ)
 
 
 Route::get('/user', function (Request $request) {
@@ -23,8 +20,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-<<<<<<< HEAD
-=======
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -32,7 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', [AuthController::class, 'profile']);
 });
 
->>>>>>> efa4ca4 (gen committ)
 
 
 Route::prefix('agents')->group(function () {
@@ -41,9 +35,6 @@ Route::prefix('agents')->group(function () {
     Route::post('/', [AgentsController::class, 'store']);
     Route::put('/{id}', [AgentsController::class, 'update']);
     Route::delete('/{id}', [AgentsController::class, 'destroy']);
-<<<<<<< HEAD
-});
-=======
 });
 
 
@@ -76,4 +67,3 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
->>>>>>> efa4ca4 (gen committ)

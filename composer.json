@@ -10,11 +10,7 @@
         "bezhansalleh/filament-shield": "^4.1",
         "filament/filament": "5",
         "laravel/framework": "^12.0",
-<<<<<<< HEAD
-        "laravel/sanctum": "^4.0",
-=======
         "laravel/sanctum": "^4.3",
->>>>>>> efa4ca4 (gen committ)
         "laravel/tinker": "^2.10.1",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.24"

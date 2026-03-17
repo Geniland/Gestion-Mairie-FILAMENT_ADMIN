@@ -6,18 +6,12 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
-<<<<<<< HEAD
-
-class Agents extends Authenticatable
-{
-=======
 use Laravel\Sanctum\HasApiTokens; // <-- le trait pour API token
 
 class Agents extends Authenticatable
 {
      use HasApiTokens; // <-- nécessaire pour createToken()
     
->>>>>>> efa4ca4 (gen committ)
      use HasRoles;
     protected $fillable = [
         'commune_id',
@@ -28,8 +22,6 @@ class Agents extends Authenticatable
         'password'
     ];
 
-<<<<<<< HEAD
-=======
 
      protected $hidden = [
         'password',
@@ -43,7 +35,6 @@ class Agents extends Authenticatable
     }
 
 
->>>>>>> efa4ca4 (gen committ)
      // Méthode pour Filament
     // public function getFilamentName(): string
     // {
@@ -73,17 +64,10 @@ class Agents extends Authenticatable
         return $this->role === 'agent';
     }
 
-<<<<<<< HEAD
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
-=======
     // public function setPasswordAttribute($value)
     // {
     //     $this->attributes['password'] = Hash::make($value);
     // }
->>>>>>> efa4ca4 (gen committ)
 
     public function commune()
     {
