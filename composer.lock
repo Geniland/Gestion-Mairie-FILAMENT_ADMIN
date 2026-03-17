@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "541c62776789d83a2c476c4c97e6f8dc",
+=======
+    "content-hash": "c069e50e3300a89a22028a491a17e1f8",
+>>>>>>> efa4ca4 (gen committ)
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -790,6 +794,7 @@
         },
         {
             "name": "danharrin/livewire-rate-limiting",
+<<<<<<< HEAD
             "version": "v2.1.0",
             "source": {
                 "type": "git",
@@ -804,13 +809,34 @@
             },
             "require": {
                 "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+=======
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danharrin/livewire-rate-limiting.git",
+                "reference": "c03e649220089f6e5a52d422e24e3f98c73e456d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danharrin/livewire-rate-limiting/zipball/c03e649220089f6e5a52d422e24e3f98c73e456d",
+                "reference": "c03e649220089f6e5a52d422e24e3f98c73e456d",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^9.0|^10.0|^11.0|^12.0|^13.0",
+>>>>>>> efa4ca4 (gen committ)
                 "php": "^8.0"
             },
             "require-dev": {
                 "livewire/livewire": "^3.0",
                 "livewire/volt": "^1.3",
+<<<<<<< HEAD
                 "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
                 "phpunit/phpunit": "^9.0|^10.0|^11.5.3"
+=======
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0|^11.0",
+                "phpunit/phpunit": "^9.0|^10.0|^11.5.3|^12.5.12"
+>>>>>>> efa4ca4 (gen committ)
             },
             "type": "library",
             "autoload": {
@@ -840,7 +866,11 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-02-21T08:52:11+00:00"
+=======
+            "time": "2026-03-16T11:29:23+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "dasprid/enum",
@@ -2096,6 +2126,7 @@
         },
         {
             "name": "guzzlehttp/psr7",
+<<<<<<< HEAD
             "version": "2.8.0",
             "source": {
                 "type": "git",
@@ -2106,6 +2137,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/guzzle/psr7/zipball/21dc724a0583619cd1652f673303492272778051",
                 "reference": "21dc724a0583619cd1652f673303492272778051",
+=======
+            "version": "2.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/psr7.git",
+                "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/7d0ed42f28e42d61352a7a79de682e5e67fec884",
+                "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -2121,6 +2164,10 @@
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "http-interop/http-factory-tests": "0.9.0",
+<<<<<<< HEAD
+=======
+                "jshttp/mime-db": "1.54.0.1",
+>>>>>>> efa4ca4 (gen committ)
                 "phpunit/phpunit": "^8.5.44 || ^9.6.25"
             },
             "suggest": {
@@ -2192,7 +2239,11 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/guzzle/psr7/tree/2.8.0"
+=======
+                "source": "https://github.com/guzzle/psr7/tree/2.9.0"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -2208,7 +2259,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-08-23T21:21:41+00:00"
+=======
+            "time": "2026-03-10T16:41:02+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "guzzlehttp/uri-template",
@@ -2361,6 +2416,7 @@
         },
         {
             "name": "laravel/framework",
+<<<<<<< HEAD
             "version": "v12.53.0",
             "source": {
                 "type": "git",
@@ -2371,6 +2427,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/f57f035c0d34503d9ff30be76159bb35a003cd1f",
                 "reference": "f57f035c0d34503d9ff30be76159bb35a003cd1f",
+=======
+            "version": "v12.54.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "325497463e7599cd14224c422c6e5dd2fe832868"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/325497463e7599cd14224c422c6e5dd2fe832868",
+                "reference": "325497463e7599cd14224c422c6e5dd2fe832868",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -2391,7 +2459,11 @@
                 "guzzlehttp/uri-template": "^1.0",
                 "laravel/prompts": "^0.3.0",
                 "laravel/serializable-closure": "^1.3|^2.0",
+<<<<<<< HEAD
                 "league/commonmark": "^2.7",
+=======
+                "league/commonmark": "^2.8.1",
+>>>>>>> efa4ca4 (gen committ)
                 "league/flysystem": "^3.25.1",
                 "league/flysystem-local": "^3.25.1",
                 "league/uri": "^7.5.1",
@@ -2579,6 +2651,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
+<<<<<<< HEAD
             "time": "2026-02-24T14:35:15+00:00"
         },
         {
@@ -2593,6 +2666,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/prompts/zipball/ed8c466571b37e977532fb2fd3c272c784d7050d",
                 "reference": "ed8c466571b37e977532fb2fd3c272c784d7050d",
+=======
+            "time": "2026-03-10T20:25:56+00:00"
+        },
+        {
+            "name": "laravel/prompts",
+            "version": "v0.3.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/prompts.git",
+                "reference": "9f0e371244eedfe2ebeaa72c79c54bb5df6e0176"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/9f0e371244eedfe2ebeaa72c79c54bb5df6e0176",
+                "reference": "9f0e371244eedfe2ebeaa72c79c54bb5df6e0176",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -2636,9 +2725,15 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/laravel/prompts/tree/v0.3.13"
             },
             "time": "2026-02-06T12:17:10+00:00"
+=======
+                "source": "https://github.com/laravel/prompts/tree/v0.3.14"
+            },
+            "time": "2026-03-01T09:02:38+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "laravel/sanctum",
@@ -2832,6 +2927,7 @@
         },
         {
             "name": "league/commonmark",
+<<<<<<< HEAD
             "version": "2.8.0",
             "source": {
                 "type": "git",
@@ -2842,6 +2938,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/4efa10c1e56488e658d10adf7b7b7dcd19940bfb",
                 "reference": "4efa10c1e56488e658d10adf7b7b7dcd19940bfb",
+=======
+            "version": "2.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/commonmark.git",
+                "reference": "84b1ca48347efdbe775426f108622a42735a6579"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/84b1ca48347efdbe775426f108622a42735a6579",
+                "reference": "84b1ca48347efdbe775426f108622a42735a6579",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -2866,9 +2974,15 @@
                 "phpstan/phpstan": "^1.8.2",
                 "phpunit/phpunit": "^9.5.21 || ^10.5.9 || ^11.0.0",
                 "scrutinizer/ocular": "^1.8.1",
+<<<<<<< HEAD
                 "symfony/finder": "^5.3 | ^6.0 | ^7.0",
                 "symfony/process": "^5.4 | ^6.0 | ^7.0",
                 "symfony/yaml": "^2.3 | ^3.0 | ^4.0 | ^5.0 | ^6.0 | ^7.0",
+=======
+                "symfony/finder": "^5.3 | ^6.0 | ^7.0 || ^8.0",
+                "symfony/process": "^5.4 | ^6.0 | ^7.0 || ^8.0",
+                "symfony/yaml": "^2.3 | ^3.0 | ^4.0 | ^5.0 | ^6.0 | ^7.0 || ^8.0",
+>>>>>>> efa4ca4 (gen committ)
                 "unleashedtech/php-coding-standard": "^3.1.1",
                 "vimeo/psalm": "^4.24.0 || ^5.0.0 || ^6.0.0"
             },
@@ -2935,7 +3049,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-11-26T21:48:24+00:00"
+=======
+            "time": "2026-03-05T21:37:03+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "league/config",
@@ -3300,6 +3418,7 @@
         },
         {
             "name": "league/uri",
+<<<<<<< HEAD
             "version": "7.8.0",
             "source": {
                 "type": "git",
@@ -3314,6 +3433,22 @@
             },
             "require": {
                 "league/uri-interfaces": "^7.8",
+=======
+            "version": "7.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/uri.git",
+                "reference": "08cf38e3924d4f56238125547b5720496fac8fd4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/uri/zipball/08cf38e3924d4f56238125547b5720496fac8fd4",
+                "reference": "08cf38e3924d4f56238125547b5720496fac8fd4",
+                "shasum": ""
+            },
+            "require": {
+                "league/uri-interfaces": "^7.8.1",
+>>>>>>> efa4ca4 (gen committ)
                 "php": "^8.1",
                 "psr/http-factory": "^1"
             },
@@ -3386,7 +3521,11 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/thephpleague/uri/tree/7.8.0"
+=======
+                "source": "https://github.com/thephpleague/uri/tree/7.8.1"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -3394,6 +3533,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-01-14T17:24:56+00:00"
         },
         {
@@ -3412,6 +3552,26 @@
             },
             "require": {
                 "league/uri": "^7.8",
+=======
+            "time": "2026-03-15T20:22:25+00:00"
+        },
+        {
+            "name": "league/uri-components",
+            "version": "7.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/uri-components.git",
+                "reference": "848ff9db2f0be06229d6034b7c2e33d41b4fd675"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/uri-components/zipball/848ff9db2f0be06229d6034b7c2e33d41b4fd675",
+                "reference": "848ff9db2f0be06229d6034b7c2e33d41b4fd675",
+                "shasum": ""
+            },
+            "require": {
+                "league/uri": "^7.8.1",
+>>>>>>> efa4ca4 (gen committ)
                 "php": "^8.1"
             },
             "suggest": {
@@ -3470,7 +3630,11 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/thephpleague/uri-components/tree/7.8.0"
+=======
+                "source": "https://github.com/thephpleague/uri-components/tree/7.8.1"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -3478,6 +3642,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-01-14T17:24:56+00:00"
         },
         {
@@ -3492,6 +3657,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/c5c5cd056110fc8afaba29fa6b72a43ced42acd4",
                 "reference": "c5c5cd056110fc8afaba29fa6b72a43ced42acd4",
+=======
+            "time": "2026-03-15T20:22:25+00:00"
+        },
+        {
+            "name": "league/uri-interfaces",
+            "version": "7.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/uri-interfaces.git",
+                "reference": "85d5c77c5d6d3af6c54db4a78246364908f3c928"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/85d5c77c5d6d3af6c54db4a78246364908f3c928",
+                "reference": "85d5c77c5d6d3af6c54db4a78246364908f3c928",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -3554,7 +3735,11 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/thephpleague/uri-interfaces/tree/7.8.0"
+=======
+                "source": "https://github.com/thephpleague/uri-interfaces/tree/7.8.1"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -3562,7 +3747,11 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-01-15T06:54:53+00:00"
+=======
+            "time": "2026-03-08T20:05:35+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "livewire/livewire",
@@ -3812,6 +4001,7 @@
         },
         {
             "name": "nesbot/carbon",
+<<<<<<< HEAD
             "version": "3.11.1",
             "source": {
                 "type": "git",
@@ -3822,6 +4012,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/f438fcc98f92babee98381d399c65336f3a3827f",
                 "reference": "f438fcc98f92babee98381d399c65336f3a3827f",
+=======
+            "version": "3.11.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CarbonPHP/carbon.git",
+                "reference": "6a7e652845bb018c668220c2a545aded8594fbbf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/6a7e652845bb018c668220c2a545aded8594fbbf",
+                "reference": "6a7e652845bb018c668220c2a545aded8594fbbf",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -3913,7 +4115,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-01-29T09:26:29+00:00"
+=======
+            "time": "2026-03-11T17:23:39+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "nette/php-generator",
@@ -4294,6 +4500,7 @@
         },
         {
             "name": "openspout/openspout",
+<<<<<<< HEAD
             "version": "v4.32.0",
             "source": {
                 "type": "git",
@@ -4304,6 +4511,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/openspout/openspout/zipball/41f045c1f632e1474e15d4c7bc3abcb4a153563d",
                 "reference": "41f045c1f632e1474e15d4c7bc3abcb4a153563d",
+=======
+            "version": "v4.28.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/openspout/openspout.git",
+                "reference": "ab05a09fe6fce57c90338f83280648a9786ce36b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/openspout/openspout/zipball/ab05a09fe6fce57c90338f83280648a9786ce36b",
+                "reference": "ab05a09fe6fce57c90338f83280648a9786ce36b",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -4313,6 +4532,7 @@
                 "ext-libxml": "*",
                 "ext-xmlreader": "*",
                 "ext-zip": "*",
+<<<<<<< HEAD
                 "php": "~8.3.0 || ~8.4.0 || ~8.5.0"
             },
             "require-dev": {
@@ -4324,6 +4544,19 @@
                 "phpstan/phpstan-phpunit": "^2.0.7",
                 "phpstan/phpstan-strict-rules": "^2.0.6",
                 "phpunit/phpunit": "^12.3.7"
+=======
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0"
+            },
+            "require-dev": {
+                "ext-zlib": "*",
+                "friendsofphp/php-cs-fixer": "^3.68.3",
+                "infection/infection": "^0.29.10",
+                "phpbench/phpbench": "^1.4.0",
+                "phpstan/phpstan": "^2.1.2",
+                "phpstan/phpstan-phpunit": "^2.0.4",
+                "phpstan/phpstan-strict-rules": "^2",
+                "phpunit/phpunit": "^11.5.4"
+>>>>>>> efa4ca4 (gen committ)
             },
             "suggest": {
                 "ext-iconv": "To handle non UTF-8 CSV files (if \"php-mbstring\" is not already installed or is too limited)",
@@ -4371,7 +4604,11 @@
             ],
             "support": {
                 "issues": "https://github.com/openspout/openspout/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/openspout/openspout/tree/v4.32.0"
+=======
+                "source": "https://github.com/openspout/openspout/tree/v4.28.5"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -4383,7 +4620,11 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-09-03T16:03:54+00:00"
+=======
+            "time": "2025-01-30T13:51:11+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -5062,6 +5303,7 @@
         },
         {
             "name": "psy/psysh",
+<<<<<<< HEAD
             "version": "v0.12.20",
             "source": {
                 "type": "git",
@@ -5072,6 +5314,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/bobthecow/psysh/zipball/19678eb6b952a03b8a1d96ecee9edba518bb0373",
                 "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373",
+=======
+            "version": "v0.12.21",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bobthecow/psysh.git",
+                "reference": "4821fab5b7cd8c49a673a9fd5754dc9162bb9e97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/4821fab5b7cd8c49a673a9fd5754dc9162bb9e97",
+                "reference": "4821fab5b7cd8c49a673a9fd5754dc9162bb9e97",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -5135,9 +5389,15 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/bobthecow/psysh/tree/v0.12.20"
             },
             "time": "2026-02-11T15:05:28+00:00"
+=======
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.21"
+            },
+            "time": "2026-03-06T21:21:28+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "ralouphie/getallheaders",
@@ -5909,6 +6169,7 @@
         },
         {
             "name": "symfony/console",
+<<<<<<< HEAD
             "version": "v7.4.6",
             "source": {
                 "type": "git",
@@ -5919,6 +6180,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/console/zipball/6d643a93b47398599124022eb24d97c153c12f27",
                 "reference": "6d643a93b47398599124022eb24d97c153c12f27",
+=======
+            "version": "v7.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/console.git",
+                "reference": "e1e6770440fb9c9b0cf725f81d1361ad1835329d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/console/zipball/e1e6770440fb9c9b0cf725f81d1361ad1835329d",
+                "reference": "e1e6770440fb9c9b0cf725f81d1361ad1835329d",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -5983,7 +6256,11 @@
                 "terminal"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/console/tree/v7.4.6"
+=======
+                "source": "https://github.com/symfony/console/tree/v7.4.7"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -6003,7 +6280,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-02-25T17:02:47+00:00"
+=======
+            "time": "2026-03-06T14:06:20+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "symfony/css-selector",
@@ -6454,6 +6735,7 @@
         },
         {
             "name": "symfony/html-sanitizer",
+<<<<<<< HEAD
             "version": "v7.4.0",
             "source": {
                 "type": "git",
@@ -6464,6 +6746,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/html-sanitizer/zipball/5b0bbcc3600030b535dd0b17a0e8c56243f96d7f",
                 "reference": "5b0bbcc3600030b535dd0b17a0e8c56243f96d7f",
+=======
+            "version": "v7.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/html-sanitizer.git",
+                "reference": "e4df2abd9391ce3263baa1aea9e993f6da74a3c7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/html-sanitizer/zipball/e4df2abd9391ce3263baa1aea9e993f6da74a3c7",
+                "reference": "e4df2abd9391ce3263baa1aea9e993f6da74a3c7",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -6504,7 +6798,11 @@
                 "sanitizer"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/html-sanitizer/tree/v7.4.0"
+=======
+                "source": "https://github.com/symfony/html-sanitizer/tree/v7.4.7"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -6524,6 +6822,7 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-10-30T13:39:42+00:00"
         },
         {
@@ -6538,6 +6837,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/http-foundation/zipball/fd97d5e926e988a363cef56fbbf88c5c528e9065",
                 "reference": "fd97d5e926e988a363cef56fbbf88c5c528e9065",
+=======
+            "time": "2026-03-06T13:15:18+00:00"
+        },
+        {
+            "name": "symfony/http-foundation",
+            "version": "v7.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-foundation.git",
+                "reference": "f94b3e7b7dafd40e666f0c9ff2084133bae41e81"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/f94b3e7b7dafd40e666f0c9ff2084133bae41e81",
+                "reference": "f94b3e7b7dafd40e666f0c9ff2084133bae41e81",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -6586,7 +6901,11 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/http-foundation/tree/v7.4.6"
+=======
+                "source": "https://github.com/symfony/http-foundation/tree/v7.4.7"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -6606,6 +6925,7 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-02-21T16:25:55+00:00"
         },
         {
@@ -6620,6 +6940,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/http-kernel/zipball/002ac0cf4cd972a7fd0912dcd513a95e8a81ce83",
                 "reference": "002ac0cf4cd972a7fd0912dcd513a95e8a81ce83",
+=======
+            "time": "2026-03-06T13:15:18+00:00"
+        },
+        {
+            "name": "symfony/http-kernel",
+            "version": "v7.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-kernel.git",
+                "reference": "3b3fcf386c809be990c922e10e4c620d6367cab1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/3b3fcf386c809be990c922e10e4c620d6367cab1",
+                "reference": "3b3fcf386c809be990c922e10e4c620d6367cab1",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -6705,7 +7041,11 @@
             "description": "Provides a structured process for converting a Request into a Response",
             "homepage": "https://symfony.com",
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/http-kernel/tree/v7.4.6"
+=======
+                "source": "https://github.com/symfony/http-kernel/tree/v7.4.7"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -6725,7 +7065,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-02-26T08:30:57+00:00"
+=======
+            "time": "2026-03-06T16:33:18+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "symfony/mailer",
@@ -6813,6 +7157,7 @@
         },
         {
             "name": "symfony/mime",
+<<<<<<< HEAD
             "version": "v7.4.6",
             "source": {
                 "type": "git",
@@ -6823,6 +7168,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/mime/zipball/9fc881d95feae4c6c48678cb6372bd8a7ba04f5f",
                 "reference": "9fc881d95feae4c6c48678cb6372bd8a7ba04f5f",
+=======
+            "version": "v7.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/mime.git",
+                "reference": "da5ab4fde3f6c88ab06e96185b9922f48b677cd1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/mime/zipball/da5ab4fde3f6c88ab06e96185b9922f48b677cd1",
+                "reference": "da5ab4fde3f6c88ab06e96185b9922f48b677cd1",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -6878,7 +7235,11 @@
                 "mime-type"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/mime/tree/v7.4.6"
+=======
+                "source": "https://github.com/symfony/mime/tree/v7.4.7"
+>>>>>>> efa4ca4 (gen committ)
             },
             "funding": [
                 {
@@ -6898,7 +7259,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-02-05T15:57:06+00:00"
+=======
+            "time": "2026-03-05T15:24:09+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -8955,6 +9320,7 @@
         },
         {
             "name": "laravel/pint",
+<<<<<<< HEAD
             "version": "v1.27.1",
             "source": {
                 "type": "git",
@@ -8965,6 +9331,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/pint/zipball/54cca2de13790570c7b6f0f94f37896bee4abcb5",
                 "reference": "54cca2de13790570c7b6f0f94f37896bee4abcb5",
+=======
+            "version": "v1.29.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/pint.git",
+                "reference": "bdec963f53172c5e36330f3a400604c69bf02d39"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/bdec963f53172c5e36330f3a400604c69bf02d39",
+                "reference": "bdec963f53172c5e36330f3a400604c69bf02d39",
+>>>>>>> efa4ca4 (gen committ)
                 "shasum": ""
             },
             "require": {
@@ -8975,6 +9353,7 @@
                 "php": "^8.2.0"
             },
             "require-dev": {
+<<<<<<< HEAD
                 "friendsofphp/php-cs-fixer": "^3.93.1",
                 "illuminate/view": "^12.51.0",
                 "larastan/larastan": "^3.9.2",
@@ -8982,6 +9361,16 @@
                 "mockery/mockery": "^1.6.12",
                 "nunomaduro/termwind": "^2.3.3",
                 "pestphp/pest": "^3.8.5"
+=======
+                "friendsofphp/php-cs-fixer": "^3.94.2",
+                "illuminate/view": "^12.54.1",
+                "larastan/larastan": "^3.9.3",
+                "laravel-zero/framework": "^12.0.5",
+                "mockery/mockery": "^1.6.12",
+                "nunomaduro/termwind": "^2.4.0",
+                "pestphp/pest": "^3.8.6",
+                "shipfastlabs/agent-detector": "^1.1.0"
+>>>>>>> efa4ca4 (gen committ)
             },
             "bin": [
                 "builds/pint"
@@ -9018,7 +9407,11 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
+<<<<<<< HEAD
             "time": "2026-02-10T20:00:20+00:00"
+=======
+            "time": "2026-03-12T15:51:39+00:00"
+>>>>>>> efa4ca4 (gen committ)
         },
         {
             "name": "laravel/sail",
@@ -11071,5 +11464,9 @@
         "php": "^8.2"
     },
     "platform-dev": {},
+<<<<<<< HEAD
     "plugin-api-version": "2.6.0"
+=======
+    "plugin-api-version": "2.9.0"
+>>>>>>> efa4ca4 (gen committ)
 }

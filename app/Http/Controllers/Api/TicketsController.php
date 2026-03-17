@@ -1,0 +1,121 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Models\Tickets;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class TicketsController extends Controller
+{
+    /**
+     * Liste des tickets
+     */
+    public function index()
+    {
+        $tickets = Tickets::with(['taxe', 'commune', 'contribuable', 'agent'])->paginate(15);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Liste des tickets',
+            'data' => $tickets
+        ]);
+    }
+
+    /**
+     * Créer un nouveau ticket
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'commune_id' => 'required|exists:communes,id',
+            'contribuable_id' => 'required|exists:contribuables,id',
+            'taxe_id' => 'required|exists:taxes,id',
+            'agent_id' => 'required|exists:agents,id',
+            'date_expiration' => 'required|date',
+            'statut' => 'required|string'
+        ]);
+
+        $ticket = Tickets::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket créé avec succès',
+            'data' => $ticket
+        ], 201);
+    }
+
+    /**
+     * Afficher un ticket
+     */
+    public function show($id)
+    {
+        $ticket = Tickets::with(['taxe', 'commune', 'contribuable', 'agent'])->find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket non trouvé'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $ticket
+        ]);
+    }
+
+    /**
+     * Mettre à jour un ticket
+     */
+    public function update(Request $request, $id)
+    {
+        $ticket = Tickets::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket non trouvé'
+            ], 404);
+        }
+
+        $data = $request->validate([
+            'commune_id' => 'required|exists:communes,id',
+            'contribuable_id' => 'required|exists:contribuables,id',
+            'taxe_id' => 'required|exists:taxes,id',
+            'agent_id' => 'required|exists:agents,id',
+            'date_expiration' => 'required|date',
+            'statut' => 'required|string'
+        ]);
+
+        $ticket->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket mis à jour avec succès',
+            'data' => $ticket
+        ]);
+    }
+
+    /**
+     * Supprimer un ticket
+     */
+    public function destroy($id)
+    {
+        $ticket = Tickets::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket non trouvé'
+            ], 404);
+        }
+
+        $ticket->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket supprimé avec succès'
+        ]);
+    }
+}
