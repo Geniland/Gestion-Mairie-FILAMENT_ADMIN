@@ -19,7 +19,9 @@ class Agents extends Authenticatable
         'telephone',
         'email',
         'role',
-        'password'
+        'password',
+        'is_blocked',
+        'blocked_reason'
     ];
 
 
@@ -32,6 +34,11 @@ class Agents extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->is_blocked;
     }
 
 

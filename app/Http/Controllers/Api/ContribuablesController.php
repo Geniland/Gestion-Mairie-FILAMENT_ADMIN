@@ -3,17 +3,41 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Contribuable;
+use App\Models\Commune;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+ use Illuminate\Support\Facades\Auth;
 
 class ContribuablesController extends Controller
 {
     /**
      * Liste des contribuables
      */
+    // public function index()
+    // {
+    //     $contribuables = Contribuable::with('commune')->paginate(15);
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Liste des contribuables',
+    //         'data' => $contribuables
+    //     ]);
+    // }
+
+   
+
     public function index()
     {
-        $contribuables = Contribuable::with('commune')->paginate(15);
+        $user = Auth::user();
+
+        $query = Contribuable::with('commune');
+
+        // Agent → seulement ses contribuables
+        if ($user->isAgent()) {
+            $query->where('agent_id', $user->id);
+        }
+
+        $contribuables = $query->paginate(15);
 
         return response()->json([
             'status' => true,
@@ -27,6 +51,8 @@ class ContribuablesController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'nom' => 'required|string|max:255',
@@ -35,6 +61,8 @@ class ContribuablesController extends Controller
             'numero_identifiant' => 'required|string|max:100|unique:contribuables,numero_identifiant',
             'adresse' => 'nullable|string|max:255'
         ]);
+
+        $data['agent_id'] = $user->id;
 
         $contribuable = Contribuable::create($data);
 
@@ -50,18 +78,23 @@ class ContribuablesController extends Controller
      */
     public function show($id)
     {
-        $contribuable = Contribuable::with([
-            'commune',
-            'taxe',
-            'payement',
-            'amendes'
-        ])->find($id);
+        $user = Auth::user();
+
+        $contribuable = Contribuable::with('commune')->find($id);
 
         if (!$contribuable) {
             return response()->json([
                 'status' => false,
                 'message' => 'Contribuable non trouvé'
             ], 404);
+        }
+
+        // Vérifier si l'agent a le droit de voir ce contribuable
+        if ($user->isAgent() && $contribuable->agent_id !== $user->id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Accès non autorisé'
+            ], 403);
         }
 
         return response()->json([

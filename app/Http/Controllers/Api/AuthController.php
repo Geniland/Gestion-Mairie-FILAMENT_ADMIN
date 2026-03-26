@@ -28,6 +28,14 @@ class AuthController extends Controller
             ], 401);
         }
 
+        if ($agent->is_blocked) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Compte bloqué',
+                'reason' => $agent->blocked_reason
+            ], 403);
+}
+
         $token = $agent->createToken('api-token')->plainTextToken;
 
         return response()->json([

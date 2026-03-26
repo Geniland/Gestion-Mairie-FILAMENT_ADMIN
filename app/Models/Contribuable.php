@@ -8,12 +8,18 @@ class Contribuable extends Model
 {
     protected $fillable = [
         'commune_id',
+        'agent_id',
         'nom',
         'telephone',
         'type',
         'numero_identifiant',
         'adresse'
     ];
+
+    public function agent()
+    {
+        return $this->belongsTo(Agents::class);
+    }
 
     public function commune()
     {

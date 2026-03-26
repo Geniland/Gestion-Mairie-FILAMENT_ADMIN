@@ -13,7 +13,15 @@ class TicketsController extends Controller
      */
     public function index()
     {
-        $tickets = Tickets::with(['taxe', 'commune', 'contribuable', 'agent'])->paginate(15);
+        $user = auth()->user();
+        
+        $query = Tickets::with(['taxe', 'commune', 'contribuable', 'agent']);
+
+        if ($user && method_exists($user, 'isAgent') && $user->isAgent()) {
+            $query->where('agent_id', $user->id);
+        }
+
+        $tickets = $query->latest()->paginate(15);
 
         return response()->json([
             'success' => true,
@@ -27,14 +35,17 @@ class TicketsController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user();
+        
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'contribuable_id' => 'required|exists:contribuables,id',
             'taxe_id' => 'required|exists:taxes,id',
-            'agent_id' => 'required|exists:agents,id',
             'date_expiration' => 'required|date',
             'statut' => 'required|string'
         ]);
+
+        $data['agent_id'] = $user->id;
 
         $ticket = Tickets::create($data);
 

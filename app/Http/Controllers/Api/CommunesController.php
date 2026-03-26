@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Commune;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Quartier;
 
 class CommunesController extends Controller
 {
@@ -25,22 +26,61 @@ class CommunesController extends Controller
     /**
      * Enregistrer une commune
      */
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'nom' => 'required|string|max:255',
-            'region' => 'required|string|max:255',
-            'quartier' => 'nullable|string|max:255'
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $data = $request->validate([
+    //         'nom' => 'required|string|max:255',
+    //         'region' => 'required|string|max:255',
+    //         'quartier' => 'nullable|string|max:255'
+    //     ]);
 
-        $commune = Commune::create($data);
+    //     $commune = Commune::create($data);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Commune créée avec succès',
-            'data' => $commune
-        ], 201);
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Commune créée avec succès',
+    //         'data' => $commune
+    //     ], 201);
+    // }
+    
+
+
+
+
+public function store(Request $request)
+{
+    $data = $request->validate([
+        'nom' => 'required|string|max:255',
+        'region' => 'required|string|max:255',
+        'quartiers' => 'nullable|array',
+        'quartiers.*' => 'string|max:255'
+    ]);
+
+    // créer commune
+    $commune = Commune::create([
+        'nom' => $data['nom'],
+        'region' => $data['region']
+    ]);
+
+    // créer quartiers
+    if (!empty($data['quartiers'])) {
+        foreach ($data['quartiers'] as $quartier) {
+            Quartier::create([
+                'commune_id' => $commune->id,
+                'nom' => $quartier
+            ]);
+        }
     }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Commune créée avec quartiers',
+        'data' => $commune->load('quartiers')
+    ], 201);
+}
+
+
+
 
     /**
      * Afficher une commune spécifique

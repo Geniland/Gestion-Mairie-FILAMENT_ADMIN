@@ -14,6 +14,7 @@ class Payement extends Model
         'montant',
         'mode_payement',
         'date_payement',
+        'quartier_id', // 🔥 ajouté
         'reference_transaction',
         'reference',
     ];
@@ -31,6 +32,11 @@ class Payement extends Model
         }
 
     });
+}
+
+public function quartier()
+{
+    return $this->belongsTo(Quartier::class);
 }
 
     public function taxe()

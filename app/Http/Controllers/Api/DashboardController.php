@@ -15,40 +15,65 @@ class DashboardController extends Controller
     /**
      * Récupérer la performance des agents
      */
-    public function agentPerformance()
-    {
-        $user = auth()->user();
+  public function agentPerformance()
+{
+    $user = auth()->user();
 
-        $ticketsSub = DB::table('tickets')
-            ->select('agent_id', DB::raw('COUNT(*) as total_tickets'))
-            ->groupBy('agent_id');
+    $ticketsSub = DB::table('tickets')
+        ->select('agent_id', DB::raw('COUNT(*) as total_tickets'))
+        ->groupBy('agent_id');
 
-        $payementsSub = DB::table('payements')
-            ->select('agent_id', DB::raw('SUM(montant) as total_collecte'))
-            ->groupBy('agent_id');
+    $payementsSub = DB::table('payements')
+        ->select('agent_id', DB::raw('SUM(montant) as total_collecte'))
+        ->groupBy('agent_id');
 
-        $agents = Agents::query()
-            ->leftJoinSub($ticketsSub, 'tickets_summary', function ($join) {
-                $join->on('agents.id', '=', 'tickets_summary.agent_id');
-            })
-            ->leftJoinSub($payementsSub, 'payements_summary', function ($join) {
-                $join->on('agents.id', '=', 'payements_summary.agent_id');
-            })
-            ->select(
-                'agents.id',
-                'agents.nom',
-                DB::raw('COALESCE(tickets_summary.total_tickets, 0) as total_tickets'),
-                DB::raw('COALESCE(payements_summary.total_collecte, 0) as total_collecte')
-            )
-            ->when(!$user->isSuperAdmin(), fn($q) => $q->where('agents.id', $user->id))
-            ->orderByDesc('total_collecte')
-            ->get();
+    $agentsQuery = Agents::query()
+        ->leftJoinSub($ticketsSub, 'tickets_summary', function ($join) {
+            $join->on('agents.id', '=', 'tickets_summary.agent_id');
+        })
+        ->leftJoinSub($payementsSub, 'payements_summary', function ($join) {
+            $join->on('agents.id', '=', 'payements_summary.agent_id');
+        })
+        ->select(
+            'agents.id',
+            'agents.nom',
+            'agents.email',
+            'agents.telephone',
+            DB::raw('COALESCE(tickets_summary.total_tickets, 0) as total_tickets'),
+            DB::raw('COALESCE(payements_summary.total_collecte, 0) as total_collecte')
+        );
 
-        return response()->json([
-            'success' => true,
-            'agents' => $agents
-        ]);
+    // 🔒 Filtrage si pas super admin
+    if (!$user->isSuperAdmin()) {
+        $agentsQuery->where('agents.id', $user->id);
     }
+
+    // 🔽 Tri par performance
+    $agents = $agentsQuery
+        ->orderByDesc('total_collecte')
+        ->orderByDesc('total_tickets')
+        ->get();
+
+    // 🏆 Meilleur agent (le premier après tri)
+    $topAgent = $agents->first();
+
+    return response()->json([
+        'success' => true,
+
+        // 📊 Liste complète
+        'agents' => $agents,
+
+        // 🏆 Agent le plus performant
+        'top_agent' => $topAgent ? [
+            'id' => $topAgent->id,
+            'nom' => $topAgent->nom,
+            'email' => $topAgent->email,
+            'telephone' => $topAgent->telephone,
+            'total_tickets' => $topAgent->total_tickets,
+            'total_collecte' => $topAgent->total_collecte,
+        ] : null
+    ]);
+}
 
     /**
      * Récupérer les statistiques de revenus
@@ -79,26 +104,72 @@ class DashboardController extends Controller
     /**
      * Top 5 des taxes les plus payées
      */
-    public function topTaxes()
-    {
-        $topTaxes = Taxe::query()
-            ->join('types_taxes', 'taxes.type_taxe_id', '=', 'types_taxes.id')
-            ->join('payements', 'taxes.id', '=', 'payements.taxe_id')
-            ->where('taxes.statut', 'payee')
-            ->select(
-                DB::raw('MIN(taxes.id) as id'),
-                'types_taxes.nom as taxe',
-                DB::raw('COUNT(payements.id) as total_paiements'),
-                DB::raw('SUM(payements.montant) as total_montant')
-            )
-            ->groupBy('types_taxes.id', 'types_taxes.nom')
-            ->orderByDesc('total_montant')
-            ->limit(5)
-            ->get();
+ public function topTaxes()
+{
+    $user = auth()->user();
 
-        return response()->json([
-            'success' => true,
-            'top_taxes' => $topTaxes
-        ]);
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | 🏆 TOP 5 TAXES PAYÉES
+    |--------------------------------------------------------------------------
+    */
+    $topTaxes = Taxe::query()
+        ->join('types_taxes', 'taxes.type_taxe_id', '=', 'types_taxes.id')
+        ->join('payements', 'taxes.id', '=', 'payements.taxe_id')
+        ->where('taxes.statut', 'payee')
+        ->select(
+            DB::raw('MIN(taxes.id) as id'),
+            'types_taxes.nom as taxe',
+            DB::raw('COUNT(payements.id) as total_paiements'),
+            DB::raw('SUM(payements.montant) as total_montant')
+        )
+        ->groupBy('types_taxes.id', 'types_taxes.nom')
+        ->orderByDesc('total_montant')
+        ->limit(5)
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | 🔴 TAXES IMPAYÉES (par commune)
+    |--------------------------------------------------------------------------
+    */
+    $unpaidTaxes = Taxe::query()
+        ->join('types_taxes', 'taxes.type_taxe_id', '=', 'types_taxes.id')
+        ->join('contribuables', 'taxes.contribuable_id', '=', 'contribuables.id')
+        ->leftJoin('agents', 'taxes.agent_id', '=', 'agents.id')
+        ->where('taxes.statut', '!=', 'payee')
+
+        // 🔥 filtrage par commune de l'utilisateur
+        ->where('taxes.commune_id', $user->commune_id)
+
+        ->select(
+            'taxes.id',
+            'types_taxes.nom as taxe',
+            'contribuables.nom as contribuable',
+            'agents.nom as agent',
+            'taxes.montant',
+            'taxes.periode_debut',
+            'taxes.periode_fin',
+            'taxes.statut'
+        )
+        ->orderByDesc('taxes.created_at')
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | 🎯 RESPONSE
+    |--------------------------------------------------------------------------
+    */
+    return response()->json([
+        'success' => true,
+
+        // 🏆 Top taxes
+        'top_taxes' => $topTaxes,
+
+        // 🔴 Taxes impayées
+        'taxes_impayees' => $unpaidTaxes
+    ]);
+}
 }

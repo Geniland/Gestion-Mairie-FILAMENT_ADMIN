@@ -8,9 +8,13 @@ class Commune extends Model
 {
     protected $fillable = [
         'nom',
-        'region',
-        'quartier'
+        'region'
     ];
+
+    public function quartiers()
+{
+    return $this->hasMany(Quartier::class);
+}
 
     public function contribuable()
     {

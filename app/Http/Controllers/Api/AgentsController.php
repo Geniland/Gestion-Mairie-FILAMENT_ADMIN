@@ -25,6 +25,47 @@ class AgentsController extends Controller
         ]);
     }
 
+
+
+
+
+
+
+public function blockAgent(Request $request, Agents $agent)
+{
+    $request->validate([
+        'reason' => 'required|string'
+    ]);
+
+    $agent->update([
+        'is_blocked' => true,
+        'blocked_reason' => $request->reason
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Agent bloqué avec succès'
+    ]);
+}
+
+
+
+
+
+public function unblockAgent(Agents $agent)
+{
+    $agent->update([
+        'is_blocked' => false,
+        'blocked_reason' => null
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Agent débloqué avec succès'
+    ]);
+}
+
+
     /**
      * Afficher le formulaire de création
      */
@@ -52,7 +93,12 @@ class AgentsController extends Controller
         // Le password sera automatiquement hashé grâce au mutator dans le model
         Agents::create($data);
 
-        return redirect()->route('agents.index')->with('success', 'Agent créé avec succès.');
+        // return redirect()->route('agents.index')->with('success', 'Agent créé avec succès.');
+
+         return response()->json([
+            'status' => true,
+            'message' => 'Taxe créée avec succès'
+        ], 201);
     }
 
     /**

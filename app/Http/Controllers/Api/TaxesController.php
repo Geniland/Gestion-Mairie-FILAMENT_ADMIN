@@ -5,69 +5,66 @@ namespace App\Http\Controllers\Api;
 use App\Models\Taxe;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class TaxesController extends Controller
 {
-    /**
-     * Liste des taxes
-     */
     public function index()
     {
-        $taxes = Taxe::with([
+        $user = Auth::user();
+
+        $query = Taxe::with([
             'commune',
             'contribuable',
             'typeTaxe',
-            'agent',
-            'details',
-            'payement',
-            'tickets'
-        ])->paginate(15);
+            'agent'
+        ]);
+
+        // 🔥 ADMIN voit tout
+        if ($user->role !== 'admin') {
+            $query->where('agent_id', $user->id);
+        }
+
+        $taxes = $query->latest()->paginate(15);
 
         return response()->json([
             'status' => true,
-            'message' => 'Liste des taxes',
             'data' => $taxes
         ]);
     }
 
-    /**
-     * Créer une taxe
-     */
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'contribuable_id' => 'required|exists:contribuables,id',
-            'type_taxe_id' => 'required|exists:type_taxes,id',
-            'agent_id' => 'required|exists:agents,id',
+            'type_taxe_id' => 'required|exists:types_taxes,id',
             'montant' => 'required|numeric|min:0',
             'periode_debut' => 'required|date',
             'periode_fin' => 'required|date|after_or_equal:periode_debut',
             'statut' => 'required|string'
         ]);
 
+        // 🔥 FORCER agent_id (sécurité)
+        $data['agent_id'] = $user->id;
+
         $taxe = Taxe::create($data);
 
         return response()->json([
             'status' => true,
-            'message' => 'Taxe créée avec succès',
-            'data' => $taxe
+            'data' => $taxe->load(['contribuable', 'typeTaxe'])
         ], 201);
     }
 
-    /**
-     * Afficher une taxe spécifique
-     */
     public function show($id)
     {
         $taxe = Taxe::with([
             'commune',
             'contribuable',
             'typeTaxe',
-            'agent',
-            'details',
-            'payement',
-            'tickets'
+            'agent'
         ])->find($id);
 
         if (!$taxe) {
@@ -83,9 +80,6 @@ class TaxesController extends Controller
         ]);
     }
 
-    /**
-     * Mettre à jour une taxe
-     */
     public function update(Request $request, $id)
     {
         $taxe = Taxe::find($id);
@@ -101,7 +95,6 @@ class TaxesController extends Controller
             'commune_id' => 'required|exists:communes,id',
             'contribuable_id' => 'required|exists:contribuables,id',
             'type_taxe_id' => 'required|exists:type_taxes,id',
-            'agent_id' => 'required|exists:agents,id',
             'montant' => 'required|numeric|min:0',
             'periode_debut' => 'required|date',
             'periode_fin' => 'required|date|after_or_equal:periode_debut',
@@ -112,14 +105,10 @@ class TaxesController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Taxe mise à jour avec succès',
             'data' => $taxe
         ]);
     }
 
-    /**
-     * Supprimer une taxe
-     */
     public function destroy($id)
     {
         $taxe = Taxe::find($id);
@@ -135,7 +124,7 @@ class TaxesController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Taxe supprimée avec succès'
+            'message' => 'Supprimé avec succès'
         ]);
     }
 }
