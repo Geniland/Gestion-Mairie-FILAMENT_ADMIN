@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\TicketsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\QuartierController;
+use App\Http\Controllers\Api\MobileDashboardController;
 
 
 
@@ -60,7 +61,9 @@ Route::prefix('quartiers')->group(function () {
 
 });
 
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('dashboard/stats', [MobileDashboardController::class, 'stats']);
+});
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -72,9 +75,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('communes', CommunesController::class);
     Route::apiResource('contribuables', ContribuablesController::class);
     
+    // Route::get('admin/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('dashboard/agents', [DashboardController::class, 'agentPerformance']);
     Route::get('dashboard/revenue', [DashboardController::class, 'revenueStats']);
     Route::get('dashboard/top-taxes', [DashboardController::class, 'topTaxes']);
+    Route::get('dashboard/risk-fraud', [DashboardController::class, 'riskFraud']);
+
+    Route::get('/dashboard/best-zone', [DashboardController::class, 'bestZone']);
 });
 
 

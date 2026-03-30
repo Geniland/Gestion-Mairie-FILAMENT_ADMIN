@@ -27,9 +27,15 @@ class QuartierController extends Controller
      */
     public function store(Request $request)
     {
+        // $data = $request->validate([
+        //     'commune_id' => 'required|exists:communes,id',
+        //     'nom' => 'required|string|max:255'
+        // ]);
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
-            'nom' => 'required|string|max:255'
+            'nom' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $quartier = Quartier::create($data);

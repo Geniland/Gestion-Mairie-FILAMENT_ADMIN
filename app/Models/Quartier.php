@@ -8,7 +8,9 @@ class Quartier extends Model
 {
      protected $fillable = [
         'commune_id',
-        'nom'
+        'nom',
+        'latitude',
+        'longitude'
     ];
 
     public function commune()

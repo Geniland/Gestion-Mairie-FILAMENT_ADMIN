@@ -94,7 +94,7 @@ class TaxesController extends Controller
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'contribuable_id' => 'required|exists:contribuables,id',
-            'type_taxe_id' => 'required|exists:type_taxes,id',
+            'type_taxe_id' => 'required|exists:types_taxes,id',
             'montant' => 'required|numeric|min:0',
             'periode_debut' => 'required|date',
             'periode_fin' => 'required|date|after_or_equal:periode_debut',
