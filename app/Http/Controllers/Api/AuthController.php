@@ -68,4 +68,37 @@ class AuthController extends Controller
             'agent' => $request->user()
         ]);
     }
+
+    /**
+     * Mettre à jour le profil de l’agent connecté
+     */
+    public function updateProfile(Request $request)
+    {
+        $agent = $request->user();
+
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'email' => 'required|email|unique:agents,email,' . $agent->id,
+            'telephone' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $data = [
+            'nom' => $request->nom,
+            'email' => $request->email,
+            'telephone' => $request->telephone,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = $request->password;
+        }
+
+        $agent->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil mis à jour avec succès',
+            'agent' => $agent
+        ]);
+    }
 }

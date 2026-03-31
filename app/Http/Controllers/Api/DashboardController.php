@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Agents;
 use App\Models\Payement;
 use App\Models\Taxe;
+use App\Models\DismissedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -252,50 +253,68 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        $query = Taxe::with(['typeTaxe', 'payement']);
+        $query = Taxe::with(['typeTaxe', 'payement', 'contribuable', 'agent']);
 
         // si pas admin => voir seulement ses taxes
         if (!$user->isSuperAdmin()) {
             $query->where('agent_id', $user->id);
         }
 
+        // Exclure les notifications déjà supprimées (dismissed) par cet utilisateur
+        $dismissedIds = DismissedNotification::where('user_id', $user->id)->pluck('taxe_id')->toArray();
+        $query->whereNotIn('id', $dismissedIds);
+
         $taxes = $query->get();
 
         $alertes = 0;
         $anomalies = 0;
         $taxesSuspects = 0;
+        $details = [];
 
         foreach ($taxes as $taxe) {
-
             $montantTaxe = (float) $taxe->montant;
-            $montantBase = $taxe->typeTaxe ? (float) $taxe->typeTaxe->montant : 0;
-
-            // total encaissé sur cette taxe
+            $montantBase = $taxe->typeTaxe ? (float) $taxe->typeTaxe->montant_base : 0;
             $totalPaye = (float) $taxe->payement->sum('montant');
+            
+            $isSuspect = false;
+            $reason = "";
 
             // Cas suspect 1 : taxe sans type taxe
             if (!$taxe->typeTaxe) {
                 $alertes++;
-                $taxesSuspects++;
-                continue;
+                $isSuspect = true;
+                $reason = "Type de taxe manquant";
             }
-
             // Cas suspect 2 : montant taxe différent du montant base type taxe
-            if ($montantTaxe != $montantBase) {
+            elseif ($montantTaxe != $montantBase) {
                 $anomalies++;
-                $taxesSuspects++;
+                $isSuspect = true;
+                $reason = "Montant ($montantTaxe) non conforme au type ($montantBase)";
             }
-
             // Cas suspect 3 : montant payé différent du montant taxe
-            if ($totalPaye != $montantTaxe) {
+            elseif ($totalPaye != $montantTaxe) {
                 $alertes++;
-                $taxesSuspects++;
+                $isSuspect = true;
+                $reason = "Paiement ($totalPaye) différent du montant attendu ($montantTaxe)";
+            }
+            // Cas suspect 4 : paiement supérieur au montant taxe
+            elseif ($totalPaye > $montantTaxe) {
+                $anomalies++;
+                $isSuspect = true;
+                $reason = "Sur-paiement ($totalPaye > $montantTaxe)";
             }
 
-            // Cas suspect 4 : paiement supérieur au montant taxe
-            if ($totalPaye > $montantTaxe) {
-                $anomalies++;
+            if ($isSuspect) {
                 $taxesSuspects++;
+                $details[] = [
+                    'id' => $taxe->id,
+                    'taxe_id' => $taxe->id,
+                    'title' => 'Alerte Risque',
+                    'message' => "Le contribuable {$taxe->contribuable->nom} a un problème sur la taxe {$taxe->typeTaxe->nom}. Raison: $reason",
+                    'type' => 'danger',
+                    'agent' => $taxe->agent->nom ?? 'Inconnu',
+                    'date' => $taxe->created_at->format('d/m/Y H:i'),
+                ];
             }
         }
 
@@ -304,11 +323,24 @@ class DashboardController extends Controller
             'data' => [
                 'alertes' => $alertes,
                 'anomalies' => $anomalies,
-                'taxes_suspects' => $taxesSuspects
+                'taxes_suspects' => $taxesSuspects,
+                'details' => $details
             ]
         ]);
     }
 
+    public function dismissNotification($id)
+    {
+        $user = auth()->user();
+        
+        DismissedNotification::updateOrCreate([
+            'user_id' => $user->id,
+            'taxe_id' => $id
+        ]);
 
-
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification supprimée'
+        ]);
+    }
 }
