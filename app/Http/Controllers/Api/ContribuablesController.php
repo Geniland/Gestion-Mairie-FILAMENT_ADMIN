@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\Contribuable;
 use App\Models\Commune;
 use Illuminate\Http\Request;
@@ -11,38 +12,42 @@ use App\Http\Controllers\Controller;
 class ContribuablesController extends Controller
 {
     /**
-     * Liste des contribuables
+     * Liste des contribuables (Agents terrain)
      */
-    // public function index()
-    // {
-    //     $contribuables = Contribuable::with('commune')->paginate(15);
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'Liste des contribuables',
-    //         'data' => $contribuables
-    //     ]);
-    // }
-
-   
-
     public function index()
     {
         $user = Auth::user();
 
         $query = Contribuable::with('commune');
 
-        // Agent → seulement ses contribuables
-        if ($user->isAgent()) {
+        // Agent terrain → seulement ses contribuables
+        if ($user->role === 'agent') {
             $query->where('agent_id', $user->id);
         }
 
-        $contribuables = $query->paginate(15);
+        // Tri du plus récent au moins récent
+        $query->orderBy('created_at', 'desc');
+
+        $contribuables = $query->get();
 
         return response()->json([
             'status' => true,
-            'message' => 'Liste des contribuables',
+            'message' => 'Liste des contribuables (terrain)',
             'data' => $contribuables
+        ]);
+    }
+
+    /**
+     * Liste des utilisateurs (Portail Public)
+     */
+    public function listPublicUsers()
+    {
+        $users = User::orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Liste des utilisateurs du portail public',
+            'data' => $users
         ]);
     }
 
@@ -69,7 +74,7 @@ class ContribuablesController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Contribuable créé avec succès',
-            'data' => $contribuable
+            'data' => $contribuable->load('commune')
         ], 201);
     }
 
@@ -131,7 +136,7 @@ class ContribuablesController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Contribuable mis à jour avec succès',
-            'data' => $contribuable
+            'data' => $contribuable->load('commune')
         ]);
     }
 

@@ -51,7 +51,7 @@ class PayementsController extends Controller
             'mode_payement' => 'required|string|max:100',
             'quartier_id' => 'required|exists:quartiers,id',
             'date_payement' => 'required|date',
-            'reference_transaction' => 'nullable|string|max:255',
+            'reference_transaction' => 'nullable|string|max:255|unique:payements,reference_transaction',
             'reference' => 'nullable|string|max:255'
         ]);
 

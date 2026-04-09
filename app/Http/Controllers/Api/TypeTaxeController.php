@@ -13,7 +13,8 @@ class TypeTaxeController extends Controller
      */
     public function index()
     {
-        $types = TypeTaxe::with(['commune', 'taxe'])->paginate(15);
+        $types = TypeTaxe::paginate(15);
+        // $communes = Commune::paginate(15);
 
         return response()->json([
             'success' => true,

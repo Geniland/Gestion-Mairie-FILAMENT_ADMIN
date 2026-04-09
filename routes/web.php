@@ -16,4 +16,9 @@ Route::get('/ticket/{id}/print', function ($id) {
     return view('tickets.print', compact('ticket'));
 });
 
+// Routes publiques de vérification de ticket
+Route::get('/v/{hash}', [\App\Http\Controllers\PublicTicketController::class, 'show'])->name('ticket.verify');
+Route::get('/api/v/{hash}', [\App\Http\Controllers\PublicTicketController::class, 'verify']);
+
+
 

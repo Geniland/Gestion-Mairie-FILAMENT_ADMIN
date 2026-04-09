@@ -45,6 +45,16 @@ class TicketsController extends Controller
             'statut' => 'required|string'
         ]);
 
+        // 🔥 Éviter doublon ticket pour la même taxe
+        $existing = Tickets::where('taxe_id', $data['taxe_id'])->first();
+        if ($existing) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Un ticket existe déjà pour cette taxe.',
+                'data' => $existing->load(['taxe.typeTaxe', 'commune', 'contribuable', 'agent'])
+            ], 200);
+        }
+
         $data['agent_id'] = $user->id;
 
         $ticket = Tickets::create($data);
@@ -52,7 +62,7 @@ class TicketsController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Ticket créé avec succès',
-            'data' => $ticket
+            'data' => $ticket->load(['taxe.typeTaxe', 'commune', 'contribuable', 'agent'])
         ], 201);
     }
 

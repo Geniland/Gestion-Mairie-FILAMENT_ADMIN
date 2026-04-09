@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\PublicTaxe;
 use App\Models\Taxe;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class TaxesController extends Controller
 {
+    /**
+     * Liste des taxes (Terrain)
+     */
     public function index()
     {
         $user = Auth::user();
@@ -33,6 +37,56 @@ class TaxesController extends Controller
         ]);
     }
 
+    /**
+     * Liste des taxes publiques à valider (Site Web)
+     */
+    public function listPublicTaxes()
+    {
+        $taxes = PublicTaxe::with(['typeTaxe', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Liste des taxes publiques (site web)',
+            'data' => $taxes
+        ]);
+    }
+
+    /**
+     * Approuver une taxe publique
+     */
+    public function approvePublicTaxe(Request $request, $id)
+    {
+        $taxe = PublicTaxe::findOrFail($id);
+        $taxe->update([
+            'status' => 'approuvee',
+            'commentaire_admin' => $request->commentaire_admin
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Taxe approuvée avec succès'
+        ]);
+    }
+
+    /**
+     * Rejeter une taxe publique
+     */
+    public function rejectPublicTaxe(Request $request, $id)
+    {
+        $taxe = PublicTaxe::findOrFail($id);
+        $taxe->update([
+            'status' => 'rejetee',
+            'commentaire_admin' => $request->commentaire_admin
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Taxe rejetée'
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -46,6 +100,20 @@ class TaxesController extends Controller
             'periode_fin' => 'required|date|after_or_equal:periode_debut',
             'statut' => 'required|string'
         ]);
+
+        // 🔥 Vérifier si une taxe identique existe déjà pour éviter les doublons
+        $existing = Taxe::where('contribuable_id', $data['contribuable_id'])
+            ->where('type_taxe_id', $data['type_taxe_id'])
+            ->where('periode_debut', $data['periode_debut'])
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Cette taxe existe déjà.',
+                'data' => $existing->load(['contribuable', 'typeTaxe'])
+            ], 200); // On renvoie 200 au lieu de créer un doublon
+        }
 
         // 🔥 FORCER agent_id (sécurité)
         $data['agent_id'] = $user->id;
@@ -105,7 +173,7 @@ class TaxesController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $taxe
+            'data' => $taxe->load(['contribuable', 'typeTaxe'])
         ]);
     }
 
