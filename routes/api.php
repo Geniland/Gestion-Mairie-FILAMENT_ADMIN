@@ -71,7 +71,7 @@ Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
     Route::get('dashboard/stats', [MobileDashboardController::class, 'stats']);
 });
 
-// Public API (site web)
+    //Public API (site web)
 Route::prefix('public')->group(function () {
     Route::get('services', [PublicContentController::class, 'services']);
     Route::get('actualites', [PublicContentController::class, 'actualites']);
@@ -109,6 +109,14 @@ Route::prefix('public')->group(function () {
     
     Route::post('payments/callback', [PublicPaymentsController::class, 'callback']); // Webhook/callback
 });
+
+
+
+
+
+
+
+
 
 Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
     Route::apiResource('payements', PayementsController::class);

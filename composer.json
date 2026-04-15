@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "bezhansalleh/filament-shield": "^4.1",
+        "fedapay/fedapay-php": "^0.4.8",
         "filament/filament": "5",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.3",
