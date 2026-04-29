@@ -3,7 +3,8 @@
 namespace App\Filament\Resources\Contribuables\Schemas;
 
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class ContribuableForm
@@ -29,6 +30,13 @@ class ContribuableForm
                     ->default(null),
                 TextInput::make('adresse')
                     ->default(null),
+                Toggle::make('is_blocked')
+                    ->label('Bloqué')
+                    ->reactive(),
+                Textarea::make('blocked_reason')
+                    ->label('Raison du blocage')
+                    ->visible(fn ($get) => $get('is_blocked'))
+                    ->required(fn ($get) => $get('is_blocked')),
             ]);
     }
 }

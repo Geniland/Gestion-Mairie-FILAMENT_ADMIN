@@ -36,7 +36,8 @@ class MobileDashboardController extends Controller
             ? round(($taxesPayees / $totalTaxes) * 100, 2)
             : 0;
 
-        $agentsActifs = Agents::count();
+        // $agentsActifs = Agents::count();
+        $agentsActifs = Agents::where('is_blocked', false)->count();
 
         return response()->json([
             'status' => true,

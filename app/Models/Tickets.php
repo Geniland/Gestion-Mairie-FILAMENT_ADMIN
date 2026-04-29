@@ -15,7 +15,14 @@ class Tickets extends Model
         'numero_ticket',
         'qr_hash',
         'date_expiration',
-        'statut'
+        'statut',
+        'printed',
+        'printed_at'
+    ];
+
+    protected $casts = [
+        'printed' => 'boolean',
+        'printed_at' => 'datetime',
     ];
 
     protected static function booted()

@@ -15,7 +15,10 @@ class TypeTaxesTable
     {
         return $table
             ->columns([
-                TextColumn::make('commune.nom'),
+                TextColumn::make('commune.nom')
+                    ->label('Commune')
+                    ->searchable()
+                    ->sortable(),
                    
                 TextColumn::make('nom')
                     ->searchable(),

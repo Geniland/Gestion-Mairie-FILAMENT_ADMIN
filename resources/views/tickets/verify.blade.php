@@ -49,7 +49,7 @@
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                         <span class="text-slate-500">Montant</span>
-                        <span class="font-bold text-slate-800">[[ formatPrice(ticket.montant) ]] GNF</span>
+                        <span class="font-bold text-slate-800">[[ formatPrice(ticket.montant) ]] FCFA</span>
                     </div>
                     <div class="bg-green-50 rounded-2xl p-4 mt-6 flex items-center justify-between">
                         <div class="flex items-center">

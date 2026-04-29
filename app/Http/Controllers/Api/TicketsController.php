@@ -139,4 +139,63 @@ class TicketsController extends Controller
             'message' => 'Ticket supprimé avec succès'
         ]);
     }
+
+    /**
+     * Marquer un ticket comme imprimé
+     */
+    public function markAsPrinted($id)
+    {
+        $ticket = Tickets::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket non trouvé'
+            ], 404);
+        }
+
+        if ($ticket->printed) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ce ticket a déjà été imprimé.'
+            ], 422);
+        }
+
+        $ticket->update([
+            'printed' => true,
+            'printed_at' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket marqué comme imprimé avec succès',
+            'data' => [
+                'printed' => true,
+                'printed_at' => $ticket->printed_at
+            ]
+        ]);
+    }
+
+    /**
+     * Obtenir le statut d'impression d'un ticket
+     */
+    public function getPrintStatus($id)
+    {
+        $ticket = Tickets::find($id);
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket non trouvé'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'printed' => $ticket->printed,
+                'printed_at' => $ticket->printed_at
+            ]
+        ]);
+    }
 }

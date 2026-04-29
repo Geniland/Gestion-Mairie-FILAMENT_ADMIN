@@ -11,10 +11,16 @@ class TypeTaxeController extends Controller
     /**
      * Liste des types de taxes
      */
-    public function index()
+    public function index(Request $request)
     {
-        $types = TypeTaxe::paginate(15);
-        // $communes = Commune::paginate(15);
+        $query = TypeTaxe::with('commune');
+        
+        // Si ce n'est pas une requête admin, on ne montre que les actifs
+        if (!$request->has('all')) {
+            $query->where('actif', true);
+        }
+        
+        $types = $query->paginate(15);
 
         return response()->json([
             'success' => true,

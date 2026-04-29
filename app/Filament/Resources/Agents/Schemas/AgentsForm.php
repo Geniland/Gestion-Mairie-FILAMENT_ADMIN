@@ -25,7 +25,8 @@ class AgentsForm
                     ->required(),
                 TextInput::make('password')
                     ->password()
-                    ->required(),
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $operation): bool => $operation === 'create'),
                 TextInput::make('email')
                     ->label('Email address')
                     ->email()

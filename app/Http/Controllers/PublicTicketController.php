@@ -49,10 +49,4 @@ class PublicTicketController extends Controller
             ]
         ]);
     }
-
-    public function show($hash)
-    {
-        // On retourne juste la vue qui chargera Vue.js
-        return view('tickets.verify', ['hash' => $hash]);
-    }
 }

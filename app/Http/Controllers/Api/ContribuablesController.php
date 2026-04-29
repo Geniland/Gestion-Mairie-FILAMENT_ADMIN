@@ -8,6 +8,10 @@ use App\Models\Commune;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
  use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\EtatCivilRequest;
+use App\Models\PublicTaxe;
+use App\Models\PublicPayment;
 
 class ContribuablesController extends Controller
 {
@@ -48,6 +52,116 @@ class ContribuablesController extends Controller
             'status' => true,
             'message' => 'Liste des utilisateurs du portail public',
             'data' => $users
+        ]);
+    }
+
+    /**
+     * Mettre à jour un utilisateur du portail public
+     */
+    public function updatePublicUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'required|string|max:20',
+            'password' => 'nullable|string|min:8|confirmed'
+        ]);
+
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Utilisateur mis à jour avec succès',
+            'data' => $user
+        ]);
+    }
+
+    /**
+     * Bloquer un utilisateur du portail public
+     */
+    public function blockPublicUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $request->validate(['reason' => 'required|string']);
+
+        $user->update([
+            'is_blocked' => true,
+            'blocked_reason' => $request->reason
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Utilisateur bloqué avec succès'
+        ]);
+    }
+
+    /**
+     * Débloquer un utilisateur du portail public
+     */
+    public function unblockPublicUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->update([
+            'is_blocked' => false,
+            'blocked_reason' => null
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Utilisateur débloqué avec succès'
+        ]);
+    }
+
+    /**
+     * Historique d'un utilisateur
+     */
+    public function userHistory($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // 1. Demandes d'état civil
+        $etatCivilRequests = EtatCivilRequest::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // 2. Taxes publiques (créées sur le portail public)
+        $publicTaxes = PublicTaxe::where('user_id', $user->id)
+            ->with('typeTaxe')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // 3. Paiements en ligne
+        $publicPayments = PublicPayment::where('user_id', $user->id)
+            ->with('taxe.typeTaxe')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // 4. Taxes et paiements terrain (via téléphone/nom)
+        $taxesTerrain = \App\Models\Taxe::whereHas('contribuable', function($q) use ($user) {
+            $q->where('telephone', $user->phone)->orWhere('nom', $user->name);
+        })->with('typeTaxe')->get();
+
+        $paymentsTerrain = \App\Models\Payement::whereHas('taxe.contribuable', function($q) use ($user) {
+            $q->where('telephone', $user->phone)->orWhere('nom', $user->name);
+        })->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'etat_civil' => $etatCivilRequests,
+                'public_taxes' => $publicTaxes,
+                'public_payments' => $publicPayments,
+                'terrain_taxes' => $taxesTerrain,
+                'terrain_payments' => $paymentsTerrain
+            ]
         ]);
     }
 

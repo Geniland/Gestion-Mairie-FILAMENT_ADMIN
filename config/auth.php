@@ -45,7 +45,47 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+       // API pour citoyens
+    'api_users' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
     ],
+
+    // API pour agents
+    'api_agents' => [
+        'driver' => 'sanctum',
+        'provider' => 'agents',
+    ],
+    
+    ],
+
+//     'guards' => [
+
+//     // ADMIN PANEL (agents) - session
+//     'web' => [
+//         'driver' => 'session',
+//         'provider' => 'agents',
+//     ],
+
+//     // CITOYEN PANEL (users) - session
+//     'users' => [
+//         'driver' => 'session',
+//         'provider' => 'users',
+//     ],
+
+//     // API pour citoyens
+//     'api_users' => [
+//         'driver' => 'sanctum',
+//         'provider' => 'users',
+//     ],
+
+//     // API pour agents
+//     'api_agents' => [
+//         'driver' => 'sanctum',
+//         'provider' => 'agents',
+//     ],
+// ],
 
     'providers' => [
         'agents' => [

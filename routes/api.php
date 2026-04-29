@@ -19,8 +19,21 @@ use App\Http\Controllers\Public\ContentController as PublicContentController;
 use App\Http\Controllers\Public\TaxesController as PublicTaxesController;
 use App\Http\Controllers\Public\PaymentsController as PublicPaymentsController;
 use App\Http\Controllers\Public\EtatCivilController as PublicEtatCivilController;
+use App\Http\Controllers\Api\NotificationController;
 
 
+Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::post('notifications', [NotificationController::class, 'store']);
+    Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+});
+
+
+// Route::middleware(['auth:api_agents,api_users'])->group(function () {
+//     Route::get('/notifications', [NotificationController::class, 'index']);
+//     Route::post('/notifications', [NotificationController::class, 'store']);
+//     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+// });
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,10 +52,10 @@ Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
 
 Route::prefix('agents')->middleware(['audit.log'])->group(function () {
     Route::get('/', [AgentsController::class, 'index']);
-    Route::get('/{id}', [AgentsController::class, 'show']);
+    Route::get('/{agent}', [AgentsController::class, 'show']);
     Route::post('/', [AgentsController::class, 'store']);
-    Route::put('/{id}', [AgentsController::class, 'update']);
-    Route::delete('/{id}', [AgentsController::class, 'destroy']);
+    Route::put('/{agent}', [AgentsController::class, 'update']);
+    Route::delete('/{agent}', [AgentsController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
@@ -94,7 +107,6 @@ Route::prefix('public')->group(function () {
 
     // Routes nécessitant une connexion utilisateur public
     Route::middleware('auth:sanctum')->group(function () {
-        // Route::get('etat-civil', [PublicEtatCivilController::class, 'index']);
         Route::get('etat-civil', [PublicEtatCivilController::class, 'index']);
         Route::get('etat-civil/historique', [PublicEtatCivilController::class, 'historique']);
         Route::post('etat-civil', [PublicEtatCivilController::class, 'store']);
@@ -107,7 +119,7 @@ Route::prefix('public')->group(function () {
         Route::post('logout', [PublicEtatCivilController::class, 'logout']);
     });
     
-    Route::post('payments/callback', [PublicPaymentsController::class, 'callback']); // Webhook/callback
+    Route::match(['get', 'post'], 'payments/callback', [PublicPaymentsController::class, 'callback'])->name('public.payments.callback'); // Webhook/callback
 });
 
 
@@ -127,9 +139,15 @@ Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
     Route::apiResource('taxe-details', TaxeDetailsController::class);
     Route::apiResource('types-taxes', TypeTaxeController::class);
     Route::apiResource('tickets', TicketsController::class);
+    Route::post('tickets/{id}/mark-printed', [TicketsController::class, 'markAsPrinted']);
+    Route::get('tickets/{id}/status', [TicketsController::class, 'getPrintStatus']);
     Route::apiResource('communes', CommunesController::class);
     Route::apiResource('contribuables', ContribuablesController::class);
     Route::get('public-users', [ContribuablesController::class, 'listPublicUsers']);
+Route::put('public-users/{id}', [ContribuablesController::class, 'updatePublicUser']);
+Route::post('public-users/{id}/block', [ContribuablesController::class, 'blockPublicUser']);
+Route::post('public-users/{id}/unblock', [ContribuablesController::class, 'unblockPublicUser']);
+Route::get('public-users/{id}/history', [ContribuablesController::class, 'userHistory']);
     
     // Nouvelles routes pour la gestion du portail public par l'admin
     Route::get('admin/online-payments', [PublicPaymentsController::class, 'adminIndex']);

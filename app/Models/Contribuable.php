@@ -13,7 +13,9 @@ class Contribuable extends Model
         'telephone',
         'type',
         'numero_identifiant',
-        'adresse'
+        'adresse',
+        'is_blocked',
+        'blocked_reason'
     ];
 
     public function agent()

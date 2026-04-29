@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Contribuables\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -14,7 +15,10 @@ class ContribuablesTable
     {
         return $table
             ->columns([
-               TextColumn::make('commune.nom'),
+               TextColumn::make('commune.nom')
+                    ->label('Commune')
+                    ->searchable()
+                    ->sortable(),
                
                 TextColumn::make('nom')
                     ->searchable(),
@@ -22,6 +26,10 @@ class ContribuablesTable
                     ->searchable(),
                 TextColumn::make('type')
                     ->searchable(),
+                IconColumn::make('is_blocked')
+                    ->label('Bloqué')
+                    ->boolean()
+                    ->sortable(),
                 TextColumn::make('numero_identifiant')
                     ->searchable(),
                 TextColumn::make('adresse')

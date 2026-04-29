@@ -6,18 +6,14 @@ use App\Models\Agents;
 use App\Models\Commune;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 
 class AgentsController extends Controller
 {
-    /**
-     * Afficher la liste des agents
-     */
     public function index()
     {
-        // $agents = Agents::with('commune')->paginate(15);
-        // return view('agents.index', compact('agents'));
-         $agents = Agents::with('commune')->paginate(15);
+        $agents = Agents::with('commune')->paginate(15);
 
         return response()->json([
             'status' => true,
@@ -25,60 +21,36 @@ class AgentsController extends Controller
         ]);
     }
 
-
-
-
-
-
-
-public function blockAgent(Request $request, Agents $agent)
-{
-    $request->validate([
-        'reason' => 'required|string'
-    ]);
-
-    $agent->update([
-        'is_blocked' => true,
-        'blocked_reason' => $request->reason
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Agent bloqué avec succès'
-    ]);
-}
-
-
-
-
-
-public function unblockAgent(Agents $agent)
-{
-    $agent->update([
-        'is_blocked' => false,
-        'blocked_reason' => null
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Agent débloqué avec succès'
-    ]);
-}
-
-
-    /**
-     * Afficher le formulaire de création
-     */
-    public function create()
+    public function blockAgent(Request $request, Agents $agent)
     {
-        $communes = Commune::all();
-        $roles = ['super_admin', 'maire', 'agent'];
-        return view('agents.create', compact('communes', 'roles'));
+        $request->validate([
+            'reason' => 'required|string'
+        ]);
+
+        $agent->update([
+            'is_blocked' => true,
+            'blocked_reason' => $request->reason
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Agent bloqué avec succès'
+        ]);
     }
 
-    /**
-     * Enregistrer un nouvel agent
-     */
+    public function unblockAgent(Agents $agent)
+    {
+        $agent->update([
+            'is_blocked' => false,
+            'blocked_reason' => null
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Agent débloqué avec succès'
+        ]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -90,65 +62,68 @@ public function unblockAgent(Agents $agent)
             'password' => 'required|string|min:6|confirmed'
         ]);
 
-        // Le password sera automatiquement hashé grâce au mutator dans le model
-        Agents::create($data);
+        // 🔥 HASH PASSWORD PROPRE (NE DÉPEND PAS DU MODEL)
+        $data['password'] = Hash::make($data['password']);
 
-        // return redirect()->route('agents.index')->with('success', 'Agent créé avec succès.');
+        $agent = Agents::create($data);
 
-         return response()->json([
+        return response()->json([
             'status' => true,
-            'message' => 'Taxe créée avec succès'
+            'message' => 'Agent créé avec succès',
+            'data' => $agent->load('commune')
         ], 201);
     }
 
-    /**
-     * Afficher un agent spécifique
-     */
     public function show(Agents $agent)
     {
-        return view('agents.show', compact('agent'));
-    }
-
-    /**
-     * Afficher le formulaire d'édition
-     */
-    public function edit(Agents $agent)
-    {
-        $communes = Commune::all();
-        $roles = ['super_admin', 'maire', 'agent'];
-        return view('agents.edit', compact('agent', 'communes', 'roles'));
-    }
-
-    /**
-     * Mettre à jour un agent
-     */
-    public function update(Request $request, Agents $agent)
-    {
-        $data = $request->validate([
-            'commune_id' => 'required|exists:communes,id',
-            'nom' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'email' => 'required|email|unique:agents,email,' . $agent->id,
-            'role' => 'required|in:super_admin,maire,agent',
-            'password' => 'nullable|string|min:6|confirmed'
+        return response()->json([
+            'status' => true,
+            'data' => $agent->load('commune')
         ]);
-
-        // Si password est vide, on ne change pas le mot de passe
-        if (empty($data['password'])) {
-            unset($data['password']);
-        }
-
-        $agent->update($data);
-
-        return redirect()->route('agents.index')->with('success', 'Agent mis à jour avec succès.');
     }
 
-    /**
-     * Supprimer un agent
-     */
+ 
+
+public function update(Request $request, Agents $agent)
+{
+    $data = $request->validate([
+        'commune_id' => ['required', 'exists:communes,id'],
+        'nom' => ['required', 'string', 'max:255'],
+        'telephone' => ['required', 'string', 'max:20'],
+
+        'email' => [
+            'required',
+            'email',
+            Rule::unique('agents', 'email')->ignore($agent->id),
+        ],
+
+        'role' => ['required', 'in:agent,maire,super_admin'],
+        'password' => ['nullable', 'string', 'min:6'],
+    ]);
+
+    // éviter conflit password
+    if (empty($data['password'])) {
+        unset($data['password']);
+    } else {
+        $data['password'] = bcrypt($data['password']);
+    }
+
+    $agent->update($data);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Agent mis à jour avec succès',
+        'data' => $agent->load('commune')
+    ]);
+}
+
     public function destroy(Agents $agent)
     {
         $agent->delete();
-        return redirect()->route('agents.index')->with('success', 'Agent supprimé avec succès.');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Agent supprimé avec succès'
+        ]);
     }
 }
