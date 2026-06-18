@@ -11,6 +11,7 @@ class PublicPayment extends Model
 
     protected $fillable = [
         'user_id',
+        'commune_id',
         'public_taxe_id',
         'montant',
         'reference',
@@ -22,6 +23,11 @@ class PublicPayment extends Model
     public function taxe()
     {
         return $this->belongsTo(PublicTaxe::class, 'public_taxe_id');
+    }
+
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
     }
 
     public function user()

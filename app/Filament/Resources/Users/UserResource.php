@@ -25,6 +25,22 @@ class UserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Citoyens';
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user->isSuperAdmin()) {
+            return $query;
+        }
+
+        if ($user->isMaire()) {
+            return $query->where('commune_id', $user->commune_id);
+        }
+
+        return $query;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

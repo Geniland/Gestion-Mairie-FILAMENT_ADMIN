@@ -24,8 +24,16 @@ class ContribuablesController extends Controller
 
         $query = Contribuable::with('commune');
 
-        // Agent terrain → seulement ses contribuables
-        if ($user->role === 'agent') {
+        // Super Admin voit tout
+        if ($user->isSuperAdmin()) {
+            // Pas de filtre
+        } 
+        // Maire voit tous les contribuables de sa commune
+        elseif ($user->isMaire()) {
+            $query->where('commune_id', $user->commune_id);
+        }
+        // Agent voit seulement ses propres contribuables
+        else {
             $query->where('agent_id', $user->id);
         }
 
@@ -46,7 +54,14 @@ class ContribuablesController extends Controller
      */
     public function listPublicUsers()
     {
-        $users = User::orderBy('created_at', 'desc')->get();
+        $agent = auth()->user();
+        $query = User::orderBy('created_at', 'desc');
+        
+        if (!$agent->isSuperAdmin()) {
+            $query->where('commune_id', $agent->commune_id);
+        }
+        
+        $users = $query->get();
 
         return response()->json([
             'status' => true,

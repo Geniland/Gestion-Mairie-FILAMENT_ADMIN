@@ -34,6 +34,11 @@ class ContribuableResource extends Resource
         return $query;
     }
 
+    // 🏛️ Maire → voit tous les contribuables de sa commune
+    if ($user->isMaire()) {
+        return $query->where('commune_id', $user->commune_id);
+    }
+
     // 👤 Agent → voit seulement ses contribuables
     return $query->where('agent_id', $user->id);
 }

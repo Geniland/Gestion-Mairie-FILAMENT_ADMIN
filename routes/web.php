@@ -16,8 +16,7 @@ Route::get('/ticket/{id}/print', function ($id) {
     return view('tickets.print', compact('ticket'));
 });
 
-// Routes publiques de vérification de ticket (API)
-Route::get('/api/v/{hash}', [\App\Http\Controllers\PublicTicketController::class, 'verify']);
+
 
 // Servir l'application VueJS pour toutes les autres routes non-API
 Route::get('/{any}', function () {

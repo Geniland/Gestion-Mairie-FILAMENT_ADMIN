@@ -8,11 +8,17 @@ use Carbon\Carbon;
 
 class PublicTicketController extends Controller
 {
-    public function verify($hash)
+    public function verify($identifier)
     {
+        \Log::info('PublicTicketController verify called', ['identifier' => $identifier]);
+        
+        // Rechercher le ticket soit par qr_hash, soit par numero_ticket
         $ticket = Tickets::with(['taxe.typeTaxe', 'commune', 'contribuable'])
-            ->where('qr_hash', $hash)
+            ->where('qr_hash', $identifier)
+            ->orWhere('numero_ticket', $identifier)
             ->first();
+
+        \Log::info('PublicTicketController ticket found', ['ticket' => $ticket ? $ticket->toArray() : null]);
 
         if (!$ticket) {
             return response()->json([
@@ -46,6 +52,8 @@ class PublicTicketController extends Controller
                 'statut_db' => $ticket->statut,
                 'is_expired' => $isExpired,
                 'days_diff' => $diffDays,
+                'printed' => (bool) $ticket->printed,
+                'printed_at' => $ticket->printed_at ? $ticket->printed_at->format('d/m/Y H:i:s') : null,
             ]
         ]);
     }

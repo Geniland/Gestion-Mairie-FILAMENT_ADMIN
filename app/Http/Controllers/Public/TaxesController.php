@@ -17,7 +17,7 @@ class TaxesController extends Controller
             return response()->json(['status' => false, 'message' => 'Non authentifié'], 401);
         }
 
-        $taxes = PublicTaxe::with(['typeTaxe'])
+        $taxes = PublicTaxe::with(['typeTaxe', 'ticket'])
             ->where('user_id', $user->id)
             ->orderBy('id', 'desc')
             ->paginate(15);
@@ -66,6 +66,7 @@ class TaxesController extends Controller
 
         $taxe = PublicTaxe::create([
             'user_id' => $user->id,
+            'commune_id' => $user->commune_id,
             'contribuable_nom' => $data['contribuable_nom'],
             'type_taxe_id' => $data['type_taxe_id'],
             'montant' => $data['montant'],

@@ -25,7 +25,13 @@ class User extends Authenticatable
         'password',
         'is_blocked',
         'blocked_reason',
+        'commune_id',
     ];
+
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

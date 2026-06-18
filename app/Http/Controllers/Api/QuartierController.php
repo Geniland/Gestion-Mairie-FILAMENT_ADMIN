@@ -13,7 +13,17 @@ class QuartierController extends Controller
      */
     public function index()
     {
-        $quartiers = Quartier::with('commune')->paginate(15);
+        $query = Quartier::with('commune');
+        
+        // Filtrer par commune si l'agent connecté n'est pas super admin
+        if (auth('api_agents')->check()) {
+            $authAgent = auth('api_agents')->user();
+            if (!$authAgent->isSuperAdmin()) {
+                $query->where('commune_id', $authAgent->commune_id);
+            }
+        }
+        
+        $quartiers = $query->paginate(15);
 
         return response()->json([
             'status' => true,
@@ -27,16 +37,19 @@ class QuartierController extends Controller
      */
     public function store(Request $request)
     {
-        // $data = $request->validate([
-        //     'commune_id' => 'required|exists:communes,id',
-        //     'nom' => 'required|string|max:255'
-        // ]);
+        $authAgent = auth('api_agents')->user();
+        
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'nom' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
+
+        // Si ce n'est pas un super admin, forcer la commune de l'agent connecté
+        if (!$authAgent->isSuperAdmin()) {
+            $data['commune_id'] = $authAgent->commune_id;
+        }
 
         $quartier = Quartier::create($data);
 
@@ -61,6 +74,17 @@ class QuartierController extends Controller
             ], 404);
         }
 
+        // Vérification d'accès
+        if (auth('api_agents')->check()) {
+            $authAgent = auth('api_agents')->user();
+            if (!$authAgent->isSuperAdmin() && $quartier->commune_id !== $authAgent->commune_id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Accès refusé'
+                ], 403);
+            }
+        }
+
         return response()->json([
             'status' => true,
             'data' => $quartier
@@ -72,6 +96,8 @@ class QuartierController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $authAgent = auth('api_agents')->user();
+        
         $quartier = Quartier::find($id);
 
         if (!$quartier) {
@@ -81,10 +107,25 @@ class QuartierController extends Controller
             ], 404);
         }
 
+        // Vérification d'accès
+        if (!$authAgent->isSuperAdmin() && $quartier->commune_id !== $authAgent->commune_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Accès refusé'
+            ], 403);
+        }
+
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
-            'nom' => 'required|string|max:255'
+            'nom' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
         ]);
+
+        // Si ce n'est pas un super admin, forcer la commune de l'agent connecté
+        if (!$authAgent->isSuperAdmin()) {
+            $data['commune_id'] = $authAgent->commune_id;
+        }
 
         $quartier->update($data);
 
@@ -100,6 +141,8 @@ class QuartierController extends Controller
      */
     public function destroy($id)
     {
+        $authAgent = auth('api_agents')->user();
+        
         $quartier = Quartier::find($id);
 
         if (!$quartier) {
@@ -107,6 +150,14 @@ class QuartierController extends Controller
                 'status' => false,
                 'message' => 'Quartier non trouvé'
             ], 404);
+        }
+
+        // Vérification d'accès
+        if (!$authAgent->isSuperAdmin() && $quartier->commune_id !== $authAgent->commune_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Accès refusé'
+            ], 403);
         }
 
         $quartier->delete();

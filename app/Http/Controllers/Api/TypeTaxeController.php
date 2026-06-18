@@ -15,6 +15,17 @@ class TypeTaxeController extends Controller
     {
         $query = TypeTaxe::with('commune');
         
+        // Filtrer par commune selon l'utilisateur connecté
+        if (auth('api_agents')->check()) {
+            $authAgent = auth('api_agents')->user();
+            if (!$authAgent->isSuperAdmin()) {
+                $query->where('commune_id', $authAgent->commune_id);
+            }
+        } elseif (auth('api_users')->check()) {
+            $authUser = auth('api_users')->user();
+            $query->where('commune_id', $authUser->commune_id);
+        }
+        
         // Si ce n'est pas une requête admin, on ne montre que les actifs
         if (!$request->has('all')) {
             $query->where('actif', true);
@@ -34,6 +45,8 @@ class TypeTaxeController extends Controller
      */
     public function store(Request $request)
     {
+        $authAgent = auth('api_agents')->user();
+        
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'nom' => 'required|string|max:255',
@@ -42,6 +55,11 @@ class TypeTaxeController extends Controller
             'periode' => 'required|string|max:100',
             'actif' => 'boolean'
         ]);
+
+        // Si ce n'est pas un super admin, forcer la commune de l'agent connecté
+        if (!$authAgent->isSuperAdmin()) {
+            $data['commune_id'] = $authAgent->commune_id;
+        }
 
         $type = TypeTaxe::create($data);
 
@@ -66,6 +84,25 @@ class TypeTaxeController extends Controller
             ], 404);
         }
 
+        // Vérification de l'accès
+        if (auth('api_agents')->check()) {
+            $authAgent = auth('api_agents')->user();
+            if (!$authAgent->isSuperAdmin() && $type->commune_id !== $authAgent->commune_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Accès refusé'
+                ], 403);
+            }
+        } elseif (auth('api_users')->check()) {
+            $authUser = auth('api_users')->user();
+            if ($type->commune_id !== $authUser->commune_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Accès refusé'
+                ], 403);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'data' => $type
@@ -86,6 +123,16 @@ class TypeTaxeController extends Controller
             ], 404);
         }
 
+        $authAgent = auth('api_agents')->user();
+        
+        // Vérification : seul le super admin peut modifier des types de taxes d'autres communes
+        if (!$authAgent->isSuperAdmin() && $type->commune_id !== $authAgent->commune_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès refusé'
+            ], 403);
+        }
+
         $data = $request->validate([
             'commune_id' => 'required|exists:communes,id',
             'nom' => 'required|string|max:255',
@@ -94,6 +141,11 @@ class TypeTaxeController extends Controller
             'periode' => 'required|string|max:100',
             'actif' => 'boolean'
         ]);
+
+        // Si ce n'est pas un super admin, forcer la commune de l'agent connecté
+        if (!$authAgent->isSuperAdmin()) {
+            $data['commune_id'] = $authAgent->commune_id;
+        }
 
         $type->update($data);
 
@@ -116,6 +168,16 @@ class TypeTaxeController extends Controller
                 'success' => false,
                 'message' => 'Type de taxe non trouvé'
             ], 404);
+        }
+
+        $authAgent = auth('api_agents')->user();
+        
+        // Vérification : seul le super admin peut supprimer des types de taxes d'autres communes
+        if (!$authAgent->isSuperAdmin() && $type->commune_id !== $authAgent->commune_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Accès refusé'
+            ], 403);
         }
 
         $type->delete();

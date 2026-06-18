@@ -24,8 +24,16 @@ class TaxesController extends Controller
             'agent'
         ]);
 
-        // 🔥 ADMIN voit tout
-        if ($user->role !== 'admin') {
+        // Super Admin voit tout
+        if ($user->isSuperAdmin()) {
+            // Pas de filtre
+        } 
+        // Maire voit toutes les taxes de sa commune
+        elseif ($user->isMaire()) {
+            $query->where('commune_id', $user->commune_id);
+        }
+        // Agent voit seulement ses propres taxes
+        else {
             $query->where('agent_id', $user->id);
         }
 
@@ -42,9 +50,14 @@ class TaxesController extends Controller
      */
     public function listPublicTaxes()
     {
-        $taxes = PublicTaxe::with(['typeTaxe', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $agent = auth()->user();
+        $query = PublicTaxe::with(['typeTaxe', 'user']);
+        
+        if (!$agent->isSuperAdmin()) {
+            $query->where('commune_id', $agent->commune_id);
+        }
+        
+        $taxes = $query->orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'status' => true,

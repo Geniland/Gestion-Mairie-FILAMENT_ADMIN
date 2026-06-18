@@ -13,6 +13,7 @@ class PublicTaxe extends Model
 
     protected $fillable = [
         'user_id',
+        'commune_id',
         'contribuable_id',
         'contribuable_nom',
         'type_taxe_id',
@@ -22,11 +23,17 @@ class PublicTaxe extends Model
         'reference',
         'status',
         'commentaire_admin',
+        'ticket_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
     }
 
     public function contribuable()
@@ -37,5 +44,10 @@ class PublicTaxe extends Model
     public function typeTaxe()
     {
         return $this->belongsTo(TypeTaxe::class, 'type_taxe_id');
+    }
+    
+    public function ticket()
+    {
+        return $this->belongsTo(Tickets::class, 'ticket_id');
     }
 }

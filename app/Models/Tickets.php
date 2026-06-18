@@ -25,24 +25,26 @@ class Tickets extends Model
         'printed_at' => 'datetime',
     ];
 
-    protected static function booted()
-    {
-        static::creating(function ($ticket) {
-            $ticket->qr_hash = Str::uuid();
-        });
-    }
-
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($ticket) {
+            // Log pour voir ce qui est reçu
+            \Log::info('Tickets creating event', [
+                'received_numero_ticket' => $ticket->numero_ticket,
+                'received_qr_hash' => $ticket->qr_hash,
+                'all_attributes' => $ticket->getAttributes()
+            ]);
 
-            $ticket->numero_ticket =
-                'TCK-'.date('Y').'-'.rand(100000,999999);
-
-            $ticket->qr_hash =
-                md5($ticket->numero_ticket.time());
+            // Générer un numéro de ticket seulement si pas fourni (pour les syncs du mobile)
+            if (empty($ticket->numero_ticket)) {
+                $ticket->numero_ticket = 'TCK-' . date('Y') . '-' . rand(100000, 999999);
+            }
+            // Générer un QR hash seulement si pas fourni
+            if (empty($ticket->qr_hash)) {
+                $ticket->qr_hash = md5($ticket->numero_ticket . time());
+            }
         });
     }
 

@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use App\Models\Commune;
 
 class UserForm
 {
@@ -11,6 +13,12 @@ class UserForm
     {
         return $schema
             ->components([
+                Select::make('commune_id')
+                    ->label('Commune')
+                    ->relationship('commune', 'nom')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('email')

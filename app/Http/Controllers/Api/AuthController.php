@@ -21,10 +21,23 @@ class AuthController extends Controller
 
         $agent = Agents::where('email', $request->email)->first();
 
+        \Log::info('Login attempt', [
+            'email' => $request->email,
+            'agent_found' => $agent ? 'yes' : 'no',
+            'agent_id' => $agent?->id,
+            'agent_role' => $agent?->role,
+            'agent_commune_id' => $agent?->commune_id,
+            'password_check' => $agent ? Hash::check($request->password, $agent->password) : 'no_agent'
+        ]);
+
         if (!$agent || !Hash::check($request->password, $agent->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Identifiants invalides'
+                'message' => 'Identifiants invalides',
+                'debug' => [
+                    'agent_found' => $agent ? 'yes' : 'no',
+                    'password_check' => $agent ? Hash::check($request->password, $agent->password) : null
+                ]
             ], 401);
         }
 

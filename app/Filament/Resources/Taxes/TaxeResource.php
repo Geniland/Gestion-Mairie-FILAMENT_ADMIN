@@ -36,6 +36,11 @@ public static function getEloquentQuery(): Builder
         return $query;
     }
 
+    // Maire voit toutes les taxes de sa commune
+    if ($user->isMaire()) {
+        return $query->where('commune_id', $user->commune_id);
+    }
+
     // Agent voit seulement les taxes qu'il a créées
     return $query->where('agent_id', $user->id);
 }

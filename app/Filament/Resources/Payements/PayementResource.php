@@ -34,6 +34,11 @@ class PayementResource extends Resource
         return $query;
     }
 
+    // Maire voit tous les paiements de sa commune
+    if ($user->isMaire()) {
+        return $query->where('commune_id', $user->commune_id);
+    }
+
     // Agent voit seulement ses paiements
     return $query->where('agent_id', $user->id);
 }

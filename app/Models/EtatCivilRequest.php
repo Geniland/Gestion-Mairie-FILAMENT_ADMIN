@@ -13,6 +13,7 @@ class EtatCivilRequest extends Model
 
     protected $fillable = [
         'user_id',
+        'commune_id',
         'reference',
         'nom',
         'telephone',
@@ -24,6 +25,11 @@ class EtatCivilRequest extends Model
         'document_url',
         'commentaire_admin',
     ];
+
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
+    }
 
     protected $casts = [
         'files' => 'array',

@@ -10,13 +10,28 @@ class AgentsForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $agent = auth()->guard('web')->user();
+        $isSuperAdmin = $agent && $agent->isSuperAdmin();
+
+        // Définir les rôles disponibles selon l'utilisateur connecté
+        $roleOptions = $isSuperAdmin 
+            ? ['super_admin' => 'Super admin', 'maire' => 'Maire', 'agent' => 'Agent'] 
+            : ['agent' => 'Agent']; // Seul super admin peut créer maire et super admin
+
         return $schema
             ->components([
+                Select::make('role')
+                    ->options($roleOptions)
+                    ->default($isSuperAdmin ? 'agent' : 'agent')
+                    ->required()
+                    ->live(), // Important pour que le champ commune se mette à jour dynamiquement
+                    
                 Select::make('commune_id')
                     ->relationship('commune', 'nom')
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->label('Commune')
+                    ->required(), // Toujours requis car la base de données l'exige
                     
                 TextInput::make('nom')
                     ->required(),
@@ -31,9 +46,6 @@ class AgentsForm
                     ->label('Email address')
                     ->email()
                     ->default(null),
-                Select::make('role')
-                    ->options(['super_admin' => 'Super admin', 'admin_commune' => 'Admin commune', 'agent' => 'Agent'])
-                    ->required(),
             ]);
     }
 }

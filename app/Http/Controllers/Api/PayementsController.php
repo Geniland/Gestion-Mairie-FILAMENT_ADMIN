@@ -23,7 +23,16 @@ class PayementsController extends Controller
             'contribuable'
         ]);
 
-        if ($user && method_exists($user, 'isAgent') && $user->isAgent()) {
+        // Super Admin voit tout
+        if ($user->isSuperAdmin()) {
+            // Pas de filtre
+        } 
+        // Maire voit tous les paiements de sa commune
+        elseif ($user->isMaire()) {
+            $query->where('commune_id', $user->commune_id);
+        }
+        // Agent voit seulement ses propres paiements
+        else {
             $query->where('agent_id', $user->id);
         }
 

@@ -45,7 +45,9 @@ class DashboardController extends Controller
                 );
 
             // 🔒 Filtrage si pas super admin
-            if (!$user->isSuperAdmin()) {
+            if ($user->isMaire()) {
+                $agentsQuery->where('agents.commune_id', $user->commune_id);
+            } elseif (!$user->isSuperAdmin()) {
                 $agentsQuery->where('agents.id', $user->id);
             }
 
@@ -87,8 +89,14 @@ class DashboardController extends Controller
             $payementsQuery = Payement::query();
             $taxesQuery = Taxe::query();
 
-            if (!$user->isSuperAdmin()) {
+            if ($user->isMaire()) {
+                $query->where('commune_id', $user->commune_id);
+                $payementsQuery->where('commune_id', $user->commune_id);
+                $taxesQuery->where('commune_id', $user->commune_id);
+            } elseif (!$user->isSuperAdmin()) {
                 $query->where('agent_id', $user->id);
+                $payementsQuery->where('agent_id', $user->id);
+                $taxesQuery->where('agent_id', $user->id);
             }
 
             $today = (clone $query)->whereDate('created_at', today())->sum('montant');
@@ -130,7 +138,7 @@ class DashboardController extends Controller
             | 🏆 TOP 5 TAXES PAYÉES
             |--------------------------------------------------------------------------
             */
-            $topTaxes = Taxe::query()
+            $topTaxesQuery = Taxe::query()
                 ->join('types_taxes', 'taxes.type_taxe_id', '=', 'types_taxes.id')
                 ->join('payements', 'taxes.id', '=', 'payements.taxe_id')
                 ->where('taxes.statut', 'payee')
@@ -139,7 +147,15 @@ class DashboardController extends Controller
                     'types_taxes.nom as taxe',
                     DB::raw('COUNT(payements.id) as total_paiements'),
                     DB::raw('SUM(payements.montant) as total_montant')
-                )
+                );
+
+            if ($user->isMaire()) {
+                $topTaxesQuery->where('taxes.commune_id', $user->commune_id);
+            } elseif (!$user->isSuperAdmin()) {
+                $topTaxesQuery->where('taxes.agent_id', $user->id);
+            }
+
+            $topTaxes = $topTaxesQuery
                 ->groupBy('types_taxes.id', 'types_taxes.nom')
                 ->orderByDesc('total_montant')
                 ->limit(5)
@@ -193,11 +209,23 @@ class DashboardController extends Controller
 
     public function stats()
         {
+            $user = auth()->user();
+            $taxesQuery = Taxe::query();
+            $payementsQuery = Payement::query();
+
+            if ($user->isMaire()) {
+                $taxesQuery->where('commune_id', $user->commune_id);
+                $payementsQuery->where('commune_id', $user->commune_id);
+            } elseif (!$user->isSuperAdmin()) {
+                $taxesQuery->where('agent_id', $user->id);
+                $payementsQuery->where('agent_id', $user->id);
+            }
+
             // Total attendu = somme de toutes les taxes créées
-            $totalAttendu = Taxe::sum('montant');
+            $totalAttendu = $taxesQuery->sum('montant');
 
             // Total payé = somme de tous les paiements enregistrés
-            $totalPaye = Payement::sum('montant');
+            $totalPaye = $payementsQuery->sum('montant');
 
             // Eviter division par zéro
             $tauxRecouvrement = 0;
@@ -230,7 +258,9 @@ class DashboardController extends Controller
             );
 
         // si ce n'est pas un super admin => filtrer par agent connecté
-        if (!$user->isSuperAdmin()) {
+        if ($user->isMaire()) {
+            $query->where('payements.commune_id', $user->commune_id);
+        } elseif (!$user->isSuperAdmin()) {
             $query->where('payements.agent_id', $user->id);
         }
 
@@ -255,8 +285,10 @@ class DashboardController extends Controller
 
         $query = Taxe::with(['typeTaxe', 'payement', 'contribuable', 'agent']);
 
-        // si pas admin => voir seulement ses taxes
-        if (!$user->isSuperAdmin()) {
+        // si pas admin => voir seulement ses taxes ou sa commune
+        if ($user->isMaire()) {
+            $query->where('commune_id', $user->commune_id);
+        } elseif (!$user->isSuperAdmin()) {
             $query->where('agent_id', $user->id);
         }
 

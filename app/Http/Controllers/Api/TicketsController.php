@@ -42,12 +42,30 @@ class TicketsController extends Controller
             'contribuable_id' => 'required|exists:contribuables,id',
             'taxe_id' => 'required|exists:taxes,id',
             'date_expiration' => 'required|date',
-            'statut' => 'required|string'
+            'statut' => 'required|string',
+            'numero_ticket' => 'nullable|string|max:255',
+            'qr_hash' => 'nullable|string|max:255',
+            'printed' => 'nullable|boolean',
+            'printed_at' => 'nullable|date',
         ]);
 
+        // Ajouter les champs numero_ticket et qr_hash si présents dans la requête
+        if ($request->has('numero_ticket')) {
+            $data['numero_ticket'] = $request->numero_ticket;
+        }
+        if ($request->has('qr_hash')) {
+            $data['qr_hash'] = $request->qr_hash;
+        }
         // 🔥 Éviter doublon ticket pour la même taxe
         $existing = Tickets::where('taxe_id', $data['taxe_id'])->first();
         if ($existing) {
+            // Si le ticket est marqué comme imprimé et le ticket existant ne l'est pas, mettre à jour
+            if (isset($data['printed']) && ($data['printed'] == true || $data['printed'] == 1) && !$existing->printed) {
+                $existing->update([
+                    'printed' => true,
+                    'printed_at' => isset($data['printed_at']) ? $data['printed_at'] : now()
+                ]);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Un ticket existe déjà pour cette taxe.',
@@ -57,12 +75,16 @@ class TicketsController extends Controller
 
         $data['agent_id'] = $user->id;
 
+        // Log pour voir tout ce qui est sur le point d'être créé
+        \Log::info('Tickets store method - final data', $data);
+
         $ticket = Tickets::create($data);
+        $ticket->load(['taxe.typeTaxe', 'commune', 'contribuable', 'agent']);
 
         return response()->json([
             'success' => true,
             'message' => 'Ticket créé avec succès',
-            'data' => $ticket->load(['taxe.typeTaxe', 'commune', 'contribuable', 'agent'])
+            'data' => $ticket
         ], 201);
     }
 
@@ -154,21 +176,17 @@ class TicketsController extends Controller
             ], 404);
         }
 
-        if ($ticket->printed) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ce ticket a déjà été imprimé.'
-            ], 422);
+        // Si le ticket est déjà imprimé, retourner succès quand même
+        if (!$ticket->printed) {
+            $ticket->update([
+                'printed' => true,
+                'printed_at' => now()
+            ]);
         }
-
-        $ticket->update([
-            'printed' => true,
-            'printed_at' => now()
-        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Ticket marqué comme imprimé avec succès',
+            'message' => $ticket->printed ? 'Ticket déjà marqué comme imprimé' : 'Ticket marqué comme imprimé avec succès',
             'data' => [
                 'printed' => true,
                 'printed_at' => $ticket->printed_at

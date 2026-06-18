@@ -10,7 +10,21 @@ use App\Models\Quartier;
 class CommunesController extends Controller
 {
     /**
-     * Liste des communes
+     * Liste des communes (public, no auth)
+     */
+    public function publicIndex()
+    {
+        $communes = Commune::all();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Liste des communes',
+            'data' => $communes
+        ]);
+    }
+
+    /**
+     * Liste des communes (admin)
      */
     public function index()
     {

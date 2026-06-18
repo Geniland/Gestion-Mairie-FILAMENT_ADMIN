@@ -37,11 +37,25 @@ class NotificationController extends Controller
             return response()->json(['status' => false, 'message' => 'Non authentifié'], 401);
         }
 
-        // Si c'est l'admin, il voit tous les messages pour pouvoir gérer les conversations
+        // Si c'est l'admin/agent
         if ($sender['type'] === 'admin') {
-            $notifications = Notification::with('user')
-                ->orderBy('created_at', 'asc')
-                ->get();
+            $admin = $sender['user'];
+            
+            // Super admin voit tous les messages
+            if ($admin->isSuperAdmin()) {
+                $notifications = Notification::with('user')
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+            } 
+            // Les autres agents voient seulement les messages de leur commune
+            else {
+                $notifications = Notification::with('user')
+                    ->whereHas('user', function($query) use ($admin) {
+                        $query->where('commune_id', $admin->commune_id);
+                    })
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+            }
         } 
         // Si c'est un citoyen, il ne voit que son propre fil de discussion
         else {
@@ -84,7 +98,20 @@ class NotificationController extends Controller
                     'message' => 'L\'ID du citoyen est obligatoire pour un admin'
                 ], 400);
             }
+            
+            $admin = $sender['user'];
             $targetUserId = $data['user_id'];
+            
+            // Vérification : seul le super admin peut écrire à tous les citoyens
+            if (!$admin->isSuperAdmin()) {
+                $targetUser = \App\Models\User::find($targetUserId);
+                if (!$targetUser || $targetUser->commune_id !== $admin->commune_id) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Vous ne pouvez pas envoyer de message à ce citoyen (commune différente)'
+                    ], 403);
+                }
+            }
         } else {
             // Un citoyen s'écrit à lui-même (son fil)
             $targetUserId = $sender['user']->id;
@@ -129,13 +156,25 @@ class NotificationController extends Controller
             ], 404);
         }
 
-        // citoyen ne peut modifier que ses messages
         if ($sender['type'] === 'citizen') {
+            // Citoyen ne peut modifier que ses messages
             if ($notification->user_id !== $sender['user']->id) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Accès refusé'
                 ], 403);
+            }
+        } else {
+            // Agent ne peut modifier que les messages de sa commune (sauf super admin)
+            $admin = $sender['user'];
+            if (!$admin->isSuperAdmin()) {
+                $targetUser = \App\Models\User::find($notification->user_id);
+                if (!$targetUser || $targetUser->commune_id !== $admin->commune_id) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Accès refusé'
+                    ], 403);
+                }
             }
         }
 

@@ -64,6 +64,7 @@ class EtatCivilController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string|max:20|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'commune_id' => 'required|exists:communes,id',
         ]);
 
         // Le password sera automatiquement hashé grâce au cast 'hashed' dans le model User
@@ -72,6 +73,7 @@ class EtatCivilController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'password' => $validated['password'],
+            'commune_id' => $validated['commune_id'],
         ]);
 
         $token = $user->createToken('public-token')->plainTextToken;
@@ -177,6 +179,7 @@ class EtatCivilController extends Controller
 
         $created = EtatCivilRequest::create([
             'user_id' => $user->id,
+            'commune_id' => $user->commune_id,
             'reference' => $reference,
             'nom' => $validated['nom'],
             'telephone' => $validated['telephone'],
@@ -196,7 +199,14 @@ class EtatCivilController extends Controller
     public function adminIndex()
     {
         try {
-            $demandes = EtatCivilRequest::with('user')->orderBy('created_at', 'desc')->get();
+            $agent = auth()->user();
+            $query = EtatCivilRequest::with('user');
+            
+            if (!$agent->isSuperAdmin()) {
+                $query->where('commune_id', $agent->commune_id);
+            }
+            
+            $demandes = $query->orderBy('created_at', 'desc')->get();
             
             // On s'assure de renvoyer une structure de données plate et propre
             $data = $demandes->map(function($item) {

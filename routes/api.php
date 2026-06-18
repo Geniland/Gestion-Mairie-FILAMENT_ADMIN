@@ -20,7 +20,11 @@ use App\Http\Controllers\Public\TaxesController as PublicTaxesController;
 use App\Http\Controllers\Public\PaymentsController as PublicPaymentsController;
 use App\Http\Controllers\Public\EtatCivilController as PublicEtatCivilController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\PublicTicketController;
 
+
+// Route publique de vérification de ticket (doit être en premier)
+Route::get('v/{hash}', [PublicTicketController::class, 'verify']);
 
 Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
     Route::get('notifications', [NotificationController::class, 'index']);
@@ -41,6 +45,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::post('login', [AuthController::class, 'login']);
+Route::get('communes', [\App\Http\Controllers\Api\CommunesController::class, 'publicIndex']);
 
 Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -86,6 +91,7 @@ Route::middleware(['auth:sanctum', 'audit.log'])->group(function () {
 
     //Public API (site web)
 Route::prefix('public')->group(function () {
+    Route::get('communes', [\App\Http\Controllers\Api\CommunesController::class, 'publicIndex']);
     Route::get('services', [PublicContentController::class, 'services']);
     Route::get('actualites', [PublicContentController::class, 'actualites']);
     Route::get('actualites/{id}', [PublicContentController::class, 'actualite']);
